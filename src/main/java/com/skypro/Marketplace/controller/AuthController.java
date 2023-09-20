@@ -1,7 +1,7 @@
 package com.skypro.Marketplace.controller;
 
-import com.skypro.Marketplace.dto.Login;
-import com.skypro.Marketplace.dto.Register;
+import com.skypro.Marketplace.dto.user.Login;
+import com.skypro.Marketplace.dto.user.Register;
 import com.skypro.Marketplace.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

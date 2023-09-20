@@ -1,6 +1,6 @@
 package com.skypro.Marketplace.service.impl;
 
-import com.skypro.Marketplace.dto.Register;
+import com.skypro.Marketplace.dto.user.Register;
 import com.skypro.Marketplace.service.AuthService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
