@@ -1,9 +1,6 @@
 package com.skypro.Marketplace.dto.user;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Size;
 import java.util.Objects;
@@ -11,7 +8,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class NewPassword {
     @Size(min = 8, max = 16, message = "Длина текущего пароля должна быть от 8 до 16 символов")
     private String currentPassword;

@@ -1,9 +1,6 @@
 package com.skypro.Marketplace.dto.ad;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Objects;
 
@@ -11,7 +8,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class AdDTO {
     private Integer author;
     private String image;

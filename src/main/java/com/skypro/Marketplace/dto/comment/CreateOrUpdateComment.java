@@ -1,9 +1,6 @@
 package com.skypro.Marketplace.dto.comment;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -12,7 +9,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class CreateOrUpdateComment {
     @NotEmpty(message = "Текст комментария не может быть пустым")
     @Size(min = 8, max = 64, message = "Текст комментария должен содержать от 8 до 64 символов")

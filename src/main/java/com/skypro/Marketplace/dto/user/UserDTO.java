@@ -1,17 +1,14 @@
 package com.skypro.Marketplace.dto.user;
 
-import com.skypro.Marketplace.dto.Role;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import com.skypro.Marketplace.entity.Role;
+import lombok.*;
 
 import java.util.Objects;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserDTO {
     private Integer id;
     private String email;

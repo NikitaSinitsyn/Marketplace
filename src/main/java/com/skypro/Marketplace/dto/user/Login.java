@@ -7,7 +7,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class Login {
 
     private String username;

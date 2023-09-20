@@ -1,16 +1,13 @@
 package com.skypro.Marketplace.dto.user;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Objects;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UpdateUser {
     private String firstName;
     private String lastName;

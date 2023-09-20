@@ -1,6 +1,6 @@
 package com.skypro.Marketplace.dto.user;
 
-import com.skypro.Marketplace.dto.Role;
+import com.skypro.Marketplace.entity.Role;
 import lombok.*;
 
 import java.util.Objects;
@@ -8,7 +8,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class Register {
 
     private String username;
