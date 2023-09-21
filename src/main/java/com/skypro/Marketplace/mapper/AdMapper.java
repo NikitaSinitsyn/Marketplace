@@ -18,13 +18,11 @@ public interface AdMapper {
     @Mapping(source = "id", target = "pk")
     @Mapping(source = "user", target = "author", qualifiedByName = "mapUserToInteger")
     @Mapping(source = "image", target = "image", qualifiedByName = "mapImage")
-    @Mapping(source = "comments", target = "comments")
     AdDTO adToAdDTO(Ad ad);
 
     @Mapping(source = "pk", target = "id")
     @Mapping(source = "author", target = "user", qualifiedByName = "mapIntegerToUser")
     @Mapping(source = "image", target = "image", qualifiedByName = "mapImage")
-    @Mapping(source = "comments", target = "comments")
     Ad adDTOToAd(AdDTO adDTO);
 
     @Mapping(source = "id", target = "pk")

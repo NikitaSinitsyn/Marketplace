@@ -1,10 +1,5 @@
 package com.skypro.Marketplace.dto.ad;
 
-import com.skypro.Marketplace.dto.comment.CommentDTO;
-import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -13,19 +8,18 @@ public class AdDTO {
     private Integer pk;
     private String title;
     private Integer price;
-    private String description;
     private Integer author;
     private String image;
-    private List<CommentDTO> comments = new ArrayList<>();
+    private String description;
 
-    public AdDTO(Integer pk, String title, Integer price, String description, Integer author, String image, List<CommentDTO> comments) {
+
+    public AdDTO(Integer pk, String title, Integer price, Integer author, String image, String description) {
         this.pk = pk;
         this.title = title;
         this.price = price;
-        this.description = description;
         this.author = author;
         this.image = image;
-        this.comments = comments;
+        this.description = description;
     }
 
     public AdDTO() {
@@ -79,35 +73,27 @@ public class AdDTO {
         this.description = description;
     }
 
-    public List<CommentDTO> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<CommentDTO> comments) {
-        this.comments = comments;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdDTO adDTO = (AdDTO) o;
-        return Objects.equals(author, adDTO.author) && Objects.equals(image, adDTO.image) && Objects.equals(pk, adDTO.pk) && Objects.equals(price, adDTO.price) && Objects.equals(title, adDTO.title) && Objects.equals(description, adDTO.description);
+        return Objects.equals(pk, adDTO.pk) && Objects.equals(title, adDTO.title) && Objects.equals(price, adDTO.price) && Objects.equals(author, adDTO.author) && Objects.equals(image, adDTO.image) && Objects.equals(description, adDTO.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(author, image, pk, price, title, description);
+        return Objects.hash(pk, title, price, author, image, description);
     }
 
     @Override
     public String toString() {
         return "AdDTO{" +
-                "author=" + author +
-                ", image='" + image + '\'' +
-                ", pk=" + pk +
-                ", price=" + price +
+                "pk=" + pk +
                 ", title='" + title + '\'' +
+                ", price=" + price +
+                ", author=" + author +
+                ", image='" + image + '\'' +
                 ", description='" + description + '\'' +
                 '}';
     }

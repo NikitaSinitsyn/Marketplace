@@ -47,7 +47,6 @@ public interface CommentMapper {
             commentDTO.setAuthorFirstName(comment.getAuthorFirstName());
             commentDTO.setCreatedAt(comment.getCreatedAt());
             commentDTO.setText(comment.getText());
-            commentDTO.setAd(mapAdToInteger(comment.getAd()));
         }
     }
 

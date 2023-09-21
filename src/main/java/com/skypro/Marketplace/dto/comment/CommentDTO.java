@@ -13,16 +13,15 @@ public class CommentDTO {
     private String authorFirstName;
     private Integer createdAt;
     private String text;
-    private Integer ad;
 
-    public CommentDTO(Integer pk, Integer author, String authorImage, String authorFirstName, Integer createdAt, String text, Integer ad) {
+
+    public CommentDTO(Integer pk, Integer author, String authorImage, String authorFirstName, Integer createdAt, String text) {
         this.pk = pk;
         this.author = author;
         this.authorImage = authorImage;
         this.authorFirstName = authorFirstName;
         this.createdAt = createdAt;
         this.text = text;
-        this.ad = ad;
     }
 
     public Integer getPk() {
@@ -73,13 +72,6 @@ public class CommentDTO {
         this.text = text;
     }
 
-    public Integer getAd() {
-        return ad;
-    }
-
-    public void setAd(Integer ad) {
-        this.ad = ad;
-    }
 
     @Override
     public boolean equals(Object o) {

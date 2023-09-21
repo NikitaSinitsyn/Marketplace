@@ -19,24 +19,6 @@ public interface UserMapper {
 
     User userDTOToUser(UserDTO userDTO);
 
-    @Mapping(source = "id", target = "pk")
-    @Mapping(source = "user", target = "author", qualifiedByName = "mapUserToInteger")
-    @Mapping(source = "image", target = "image", qualifiedByName = "mapImage")
-    @Mapping(source = "comments", target = "comments")
-    List<AdDTO> adsToAdDTOs(List<Ad> ads);
-
-    @Mapping(source = "pk", target = "id")
-    @Mapping(source = "author", target = "user", qualifiedByName = "mapIntegerToUser")
-    @Mapping(source = "image", target = "image", qualifiedByName = "mapImage")
-    @Mapping(source = "comments", target = "comments")
-    List<Ad> adDTOsToAds(List<AdDTO> adDTOs);
-
-    @Mapping(source = "id", target = "pk")
-    @Mapping(source = "author", target = "author", qualifiedByName = "mapUserToInteger")
-    List<CommentDTO> commentsToCommentDTOs(List<Comment> comments);
-
-    @Mapping(source = "pk", target = "id")
-    Comment commentDTOToComment(CommentDTO commentDTO);
 
     default Integer mapUserToInteger(User user) {
         return user != null ? user.getId() : null;
@@ -82,7 +64,7 @@ public interface UserMapper {
             commentDTO.setAuthorFirstName(comment.getAuthorFirstName());
             commentDTO.setCreatedAt(comment.getCreatedAt());
             commentDTO.setText(comment.getText());
-            commentDTO.setAd(mapAdToInteger(comment.getAd()));
+
         }
     }
 

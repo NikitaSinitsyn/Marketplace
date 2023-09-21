@@ -18,10 +18,8 @@ public class UserDTO {
     private Role role;
     private String image;
 
-    private List<AdDTO> ads;
-    private List<CommentDTO> comments;
 
-    public UserDTO(Integer id, String email, String firstName, String lastName, String phone, Role role, String image, List<AdDTO> ads, List<CommentDTO> comments) {
+    public UserDTO(Integer id, String email, String firstName, String lastName, String phone, Role role, String image) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
@@ -29,8 +27,7 @@ public class UserDTO {
         this.phone = phone;
         this.role = role;
         this.image = image;
-        this.ads = ads;
-        this.comments = comments;
+
     }
 
     public Integer getId() {
@@ -89,21 +86,6 @@ public class UserDTO {
         this.image = image;
     }
 
-    public List<AdDTO> getAds() {
-        return ads;
-    }
-
-    public void setAds(List<AdDTO> ads) {
-        this.ads = ads;
-    }
-
-    public List<CommentDTO> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<CommentDTO> comments) {
-        this.comments = comments;
-    }
 
     @Override
     public boolean equals(Object o) {
