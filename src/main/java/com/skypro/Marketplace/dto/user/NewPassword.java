@@ -5,16 +5,34 @@ import lombok.*;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class NewPassword {
     @Size(min = 8, max = 16, message = "Длина текущего пароля должна быть от 8 до 16 символов")
     private String currentPassword;
 
     @Size(min = 8, max = 16, message = "Длина нового пароля должна быть от 8 до 16 символов")
     private String newPassword;
+
+    public NewPassword(String currentPassword, String newPassword) {
+        this.currentPassword = currentPassword;
+        this.newPassword = newPassword;
+    }
+
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
+
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,5 +1,6 @@
 package com.skypro.Marketplace.service.impl;
 
+
 import com.skypro.Marketplace.dto.comment.CommentDTO;
 import com.skypro.Marketplace.dto.comment.Comments;
 import com.skypro.Marketplace.dto.comment.CreateOrUpdateComment;
@@ -94,7 +95,7 @@ public class CommentService {
             Comment comment = commentRepository.findById(commentId)
                     .orElseThrow(() -> new IllegalArgumentException("Comment not found with id: " + commentId));
 
-            return comment.getUser().getId().equals(currentUser.getId());
+            return comment.getAuthor().getId().equals(currentUser.getId());
         } catch (IllegalArgumentException e) {
             logger.error("Comment not found with id: {}", commentId);
             throw e;

@@ -7,8 +7,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Entity
 @Table(name = "comment")
 public class Comment {
@@ -59,12 +58,36 @@ public class Comment {
         this.id = id;
     }
 
-    public String getText() {
-        return text;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public String getAuthorImage() {
+        return authorImage;
+    }
+
+    public void setAuthorImage(String authorImage) {
+        this.authorImage = authorImage;
+    }
+
+    public String getAuthorFirstName() {
+        return authorFirstName;
+    }
+
+    public void setAuthorFirstName(String authorFirstName) {
+        this.authorFirstName = authorFirstName;
+    }
+
+    public Integer getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Integer createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Ad getAd() {
@@ -75,13 +98,15 @@ public class Comment {
         this.ad = ad;
     }
 
-    public User getUser() {
-        return author;
+    public String getText() {
+        return text;
     }
 
-    public void setUser(User user) {
-        this.author = user;
+    public void setText(String text) {
+        this.text = text;
     }
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -108,5 +133,6 @@ public class Comment {
                 ", text='" + text + '\'' +
                 '}';
     }
+
 
 }

@@ -5,13 +5,31 @@ import lombok.*;
 import java.util.List;
 import java.util.Objects;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class Comments {
     private Integer count;
     private List<CommentDTO> results;
+
+    public Comments(Integer count, List<CommentDTO> results) {
+        this.count = count;
+        this.results = results;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
+    public List<CommentDTO> getResults() {
+        return results;
+    }
+
+    public void setResults(List<CommentDTO> results) {
+        this.results = results;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,20 +1,85 @@
 package com.skypro.Marketplace.dto.comment;
 
+import com.skypro.Marketplace.entity.User;
 import lombok.*;
 
 import java.util.Objects;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class CommentDTO {
-    private Long pk;
-    private Long author;
+    private Integer pk;
+    private Integer author;
     private String authorImage;
     private String authorFirstName;
-    private Long createdAt;
+    private Integer createdAt;
     private String text;
+    private Integer ad;
+
+    public CommentDTO(Integer pk, Integer author, String authorImage, String authorFirstName, Integer createdAt, String text, Integer ad) {
+        this.pk = pk;
+        this.author = author;
+        this.authorImage = authorImage;
+        this.authorFirstName = authorFirstName;
+        this.createdAt = createdAt;
+        this.text = text;
+        this.ad = ad;
+    }
+
+    public Integer getPk() {
+        return pk;
+    }
+
+    public void setPk(Integer pk) {
+        this.pk = pk;
+    }
+
+    public Integer getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Integer author) {
+        this.author = author;
+    }
+
+    public String getAuthorImage() {
+        return authorImage;
+    }
+
+    public void setAuthorImage(String authorImage) {
+        this.authorImage = authorImage;
+    }
+
+    public String getAuthorFirstName() {
+        return authorFirstName;
+    }
+
+    public void setAuthorFirstName(String authorFirstName) {
+        this.authorFirstName = authorFirstName;
+    }
+
+    public Integer getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Integer createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public Integer getAd() {
+        return ad;
+    }
+
+    public void setAd(Integer ad) {
+        this.ad = ad;
+    }
 
     @Override
     public boolean equals(Object o) {
