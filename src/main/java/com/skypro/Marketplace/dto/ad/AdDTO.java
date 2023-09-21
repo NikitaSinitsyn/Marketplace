@@ -10,16 +10,15 @@ public class AdDTO {
     private Integer price;
     private Integer author;
     private String image;
-    private String description;
 
 
-    public AdDTO(Integer pk, String title, Integer price, Integer author, String image, String description) {
+
+    public AdDTO(Integer pk, String title, Integer price, Integer author, String image) {
         this.pk = pk;
         this.title = title;
         this.price = price;
         this.author = author;
         this.image = image;
-        this.description = description;
     }
 
     public AdDTO() {
@@ -65,25 +64,18 @@ public class AdDTO {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdDTO adDTO = (AdDTO) o;
-        return Objects.equals(pk, adDTO.pk) && Objects.equals(title, adDTO.title) && Objects.equals(price, adDTO.price) && Objects.equals(author, adDTO.author) && Objects.equals(image, adDTO.image) && Objects.equals(description, adDTO.description);
+        return Objects.equals(pk, adDTO.pk) && Objects.equals(title, adDTO.title) && Objects.equals(price, adDTO.price) && Objects.equals(author, adDTO.author) && Objects.equals(image, adDTO.image);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pk, title, price, author, image, description);
+        return Objects.hash(pk, title, price, author, image);
     }
 
     @Override
@@ -94,7 +86,6 @@ public class AdDTO {
                 ", price=" + price +
                 ", author=" + author +
                 ", image='" + image + '\'' +
-                ", description='" + description + '\'' +
                 '}';
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -80,20 +81,22 @@ public class AdService {
 
     public ExtendedAd getExtendedAdById(Integer adId) {
         try {
-            AdDTO adDTO = getAdById(adId);
-            UserDTO user = userService.getUserById(adDTO.getAuthor());
+            Optional<Ad> optionalAd = adRepository.findById(adId);
+            Ad ad = optionalAd.orElseThrow(() -> new IllegalArgumentException("Ad not found with id: " + adId));
+            String imageAsString = Base64.getEncoder().encodeToString(ad.getImage());
 
+            User user = ad.getUser();
 
             return new ExtendedAd(
-                    adDTO.getPk(),
+                    ad.getId(),
                     user.getFirstName(),
                     user.getLastName(),
-                    adDTO.getDescription(),
+                    ad.getDescription(),
                     user.getEmail(),
-                    adDTO.getImage(),
+                    imageAsString,
                     user.getPhone(),
-                    adDTO.getPrice(),
-                    adDTO.getTitle()
+                    ad.getPrice(),
+                    ad.getTitle()
             );
         } catch (IllegalArgumentException e) {
             logger.error("Ad not found with id: {}", adId);
