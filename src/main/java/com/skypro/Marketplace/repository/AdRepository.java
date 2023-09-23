@@ -13,4 +13,6 @@ public interface AdRepository extends JpaRepository<Ad, Integer> {
 
     @Query("SELECT a FROM Ad a WHERE a.user.id = :userId")
     List<Ad> findByUserId(Integer userId);
+
+    boolean existsByIdAndUser_Id(Integer adId, Integer userId);
 }

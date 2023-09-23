@@ -1,23 +1,17 @@
 package com.skypro.Marketplace.entity;
 
 
-
-
-import com.skypro.Marketplace.dto.ad.AdDTO;
-import com.skypro.Marketplace.dto.comment.CommentDTO;
 import lombok.Builder;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 
 @Entity
 @Table(name = "app_user")
-@Builder
-public class User implements UserDetails {
+public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -67,16 +61,6 @@ public class User implements UserDetails {
     public User() {
 
     }
-
-    public User(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
-
-    public User(String testuser, String password, SimpleGrantedAuthority roleUser) {
-    }
-
-
 
 
     public Integer getId() {
@@ -161,37 +145,7 @@ public class User implements UserDetails {
     }
 
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
-        return authorities;
-    }
 
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -219,5 +173,87 @@ public class User implements UserDetails {
                 ", ads=" + ads +
                 ", comments=" + comments +
                 '}';
+    }
+
+    public static UserBuilder builder() {
+        return new UserBuilder();
+    }
+
+    public static class UserBuilder {
+        private Integer id;
+        private String email;
+        private String password;
+        private String firstName;
+        private String lastName;
+        private String phone;
+        private Role role;
+        private String image;
+        private List<Ad> ads;
+        private List<Comment> comments;
+
+        public UserBuilder id(Integer id) {
+            this.id = id;
+            return this;
+        }
+
+        public UserBuilder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public UserBuilder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public UserBuilder firstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public UserBuilder lastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public UserBuilder phone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        public UserBuilder role(Role role) {
+            this.role = role;
+            return this;
+        }
+
+        public UserBuilder image(String image) {
+            this.image = image;
+            return this;
+        }
+
+        public UserBuilder ads(List<Ad> ads) {
+            this.ads = ads;
+            return this;
+        }
+
+        public UserBuilder comments(List<Comment> comments) {
+            this.comments = comments;
+            return this;
+        }
+
+        public User build() {
+            User user = new User();
+            user.setId(this.id);
+            user.setEmail(this.email);
+            user.setPassword(this.password);
+            user.setFirstName(this.firstName);
+            user.setLastName(this.lastName);
+            user.setPhone(this.phone);
+            user.setRole(this.role);
+            user.setImage(this.image);
+            user.setAds(this.ads);
+            user.setComments(this.comments);
+            return user;
+        }
     }
 }

@@ -15,6 +15,10 @@ public class Comments {
         this.results = results;
     }
 
+    public Comments() {
+    }
+
+
     public Integer getCount() {
         return count;
     }

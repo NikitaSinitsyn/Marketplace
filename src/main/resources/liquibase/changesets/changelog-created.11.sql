@@ -15,7 +15,7 @@ CREATE TABLE ad (
     price INTEGER,
     description TEXT,
     user_id INTEGER REFERENCES app_user(id),
-    image bytea,
+    image TEXT,
     CONSTRAINT fk_ad_user FOREIGN KEY (user_id) REFERENCES app_user(id)
 );
 

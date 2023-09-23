@@ -16,6 +16,9 @@ public class UpdateUser {
         this.phone = phone;
     }
 
+    public UpdateUser() {
+    }
+
     public String getFirstName() {
         return firstName;
     }

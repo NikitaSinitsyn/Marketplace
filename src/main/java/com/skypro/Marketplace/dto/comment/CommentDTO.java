@@ -11,17 +11,20 @@ public class CommentDTO {
     private Integer author;
     private String authorImage;
     private String authorFirstName;
-    private Integer createdAt;
+    private Long createdAt;
     private String text;
 
 
-    public CommentDTO(Integer pk, Integer author, String authorImage, String authorFirstName, Integer createdAt, String text) {
+    public CommentDTO(Integer pk, Integer author, String authorImage, String authorFirstName, Long createdAt, String text) {
         this.pk = pk;
         this.author = author;
         this.authorImage = authorImage;
         this.authorFirstName = authorFirstName;
         this.createdAt = createdAt;
         this.text = text;
+    }
+
+    public CommentDTO() {
     }
 
     public Integer getPk() {
@@ -56,11 +59,11 @@ public class CommentDTO {
         this.authorFirstName = authorFirstName;
     }
 
-    public Integer getCreatedAt() {
+    public Long getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Integer createdAt) {
+    public void setCreatedAt(Long createdAt) {
         this.createdAt = createdAt;
     }
 

@@ -28,6 +28,9 @@ public class ExtendedAd {
         this.title = title;
     }
 
+    public ExtendedAd() {
+    }
+
     public Integer getPk() {
         return pk;
     }

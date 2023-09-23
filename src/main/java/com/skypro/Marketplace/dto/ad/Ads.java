@@ -15,6 +15,9 @@ public class Ads {
         this.results = results;
     }
 
+    public Ads() {
+    }
+
     public Integer getCount() {
         return count;
     }

@@ -18,6 +18,9 @@ public class NewPassword {
         this.newPassword = newPassword;
     }
 
+    public NewPassword() {
+    }
+
     public String getCurrentPassword() {
         return currentPassword;
     }

@@ -27,6 +27,9 @@ public class CreateOrUpdateAd {
         this.description = description;
     }
 
+    public CreateOrUpdateAd() {
+    }
+
     public String getTitle() {
         return title;
     }

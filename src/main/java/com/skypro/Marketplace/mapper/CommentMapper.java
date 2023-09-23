@@ -8,7 +8,6 @@ import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface CommentMapper {
-    CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
 
     @Mapping(source = "id", target = "pk")
     CommentDTO commentToCommentDTO(Comment comment);

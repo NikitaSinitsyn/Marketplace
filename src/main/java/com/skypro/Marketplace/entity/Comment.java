@@ -27,7 +27,7 @@ public class Comment {
     private String authorFirstName;
 
     @Column(name = "created_at")
-    private Integer createdAt;
+    private Long createdAt;
 
     @ManyToOne
     @JoinColumn(name = "ad_id")
@@ -37,7 +37,7 @@ public class Comment {
     private String text;
 
 
-    public Comment(Integer id, User author, String authorImage, String authorFirstName, Integer createdAt, Ad ad, String text) {
+    public Comment(Integer id, User author, String authorImage, String authorFirstName, Long createdAt, Ad ad, String text) {
         this.id = id;
         this.author = author;
         this.authorImage = authorImage;
@@ -82,11 +82,11 @@ public class Comment {
         this.authorFirstName = authorFirstName;
     }
 
-    public Integer getCreatedAt() {
+    public Long getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Integer createdAt) {
+    public void setCreatedAt(Long createdAt) {
         this.createdAt = createdAt;
     }
 

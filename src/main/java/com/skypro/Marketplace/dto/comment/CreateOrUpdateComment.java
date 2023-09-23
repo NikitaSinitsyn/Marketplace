@@ -15,6 +15,9 @@ public class CreateOrUpdateComment {
     public CreateOrUpdateComment(String text) {
         this.text = text;
     }
+    public CreateOrUpdateComment() {
+
+    }
 
     public String getText() {
         return text;

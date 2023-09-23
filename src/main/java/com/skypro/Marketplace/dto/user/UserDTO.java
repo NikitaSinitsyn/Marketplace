@@ -1,11 +1,7 @@
 package com.skypro.Marketplace.dto.user;
 
-import com.skypro.Marketplace.dto.ad.AdDTO;
-import com.skypro.Marketplace.dto.comment.CommentDTO;
 import com.skypro.Marketplace.entity.Role;
-import lombok.*;
 
-import java.util.List;
 import java.util.Objects;
 
 
@@ -28,6 +24,9 @@ public class UserDTO {
         this.role = role;
         this.image = image;
 
+    }
+
+    public UserDTO() {
     }
 
     public Integer getId() {

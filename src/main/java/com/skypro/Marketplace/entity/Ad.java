@@ -32,10 +32,10 @@ public class Ad {
     private User user;
 
     @Lob
-    @Column(name = "image", columnDefinition = "bytea")
-    private byte[] image;
+    @Column(name = "image", columnDefinition = "TEXT")
+    private String image;
 
-    public Ad(Integer id, String title, Integer price, String description, List<Comment> comments, User user, byte[] image) {
+    public Ad(Integer id, String title, Integer price, String description, List<Comment> comments, User user, String image) {
         this.id = id;
         this.title = title;
         this.price = price;
@@ -96,11 +96,11 @@ public class Ad {
         this.user = user;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
@@ -109,14 +109,12 @@ public class Ad {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ad ad = (Ad) o;
-        return Objects.equals(id, ad.id) && Objects.equals(title, ad.title) && Objects.equals(price, ad.price) && Objects.equals(description, ad.description) && Objects.equals(comments, ad.comments) && Objects.equals(user, ad.user) && Arrays.equals(image, ad.image);
+        return Objects.equals(id, ad.id) && Objects.equals(title, ad.title) && Objects.equals(price, ad.price) && Objects.equals(description, ad.description) && Objects.equals(comments, ad.comments) && Objects.equals(user, ad.user) && Objects.equals(image, ad.image);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, title, price, description, comments, user);
-        result = 31 * result + Arrays.hashCode(image);
-        return result;
+        return Objects.hash(id, title, price, description, comments, user, image);
     }
 
     @Override
@@ -128,7 +126,7 @@ public class Ad {
                 ", description='" + description + '\'' +
                 ", comments=" + comments +
                 ", user=" + user +
-                ", image=" + Arrays.toString(image) +
+                ", image='" + image + '\'' +
                 '}';
     }
 }
