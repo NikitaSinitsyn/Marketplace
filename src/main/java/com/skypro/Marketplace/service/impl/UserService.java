@@ -42,10 +42,6 @@ public class UserService {
 
 
     public boolean changePassword(Integer userId, NewPassword newPassword, Authentication authentication) {
-        try {
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new UnauthorizedException("Authentication required to update image.");
-            }
 
 
             User authenticatedUser = (User) authentication.getPrincipal();
@@ -70,25 +66,18 @@ public class UserService {
 
                 throw new ForbiddenException("Access forbidden to change password for another user.");
             }
-        } catch (Exception e) {
-            logger.error("An error occurred while changing password for user with id {}: {}", userId, e.getMessage());
-            throw new RuntimeException("Failed to change password.", e);
-        }
+
     }
 
     public UserDTO getUserByUsername(String username, Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new UnauthorizedException("Authentication required to get user.");
-        }
+
         return userRepository.findByEmail(username);
     }
 
 
     public UpdateUser updateUserProfile(Integer userId, UpdateUser updateUser, Authentication authentication) {
-        try {
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new UnauthorizedException("Authentication required to update user.");
-            }
+
+
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
 
@@ -104,18 +93,13 @@ public class UserService {
             updatedUserProfile.setPhone(user.getPhone());
 
             return updatedUserProfile;
-        } catch (UserNotFoundException e) {
-            logger.error("User not found with id: {}", userId);
-            throw e;
-        }
+
 
     }
 
     public UserDTO updateProfileImage(Integer userId, MultipartFile image, Authentication authentication) {
-        try {
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new UnauthorizedException("Authentication required to update image.");
-            }
+
+
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
 
@@ -136,10 +120,7 @@ public class UserService {
 
             userRepository.save(user);
             return userMapper.userToUserDTO(user);
-        } catch (UsernameNotFoundException e) {
-            logger.error("User not found with id: {}", userId);
-            throw e;
-        }
+
     }
 
 

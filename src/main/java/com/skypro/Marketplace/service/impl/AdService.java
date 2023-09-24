@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,24 +43,17 @@ public class AdService {
     }
 
     public Ads getAds() {
-        List<AdDTO> adsList = new ArrayList<>();
-        try {
-            List<Ad> ads = adRepository.findAll();
-            adsList = ads.stream().map(adMapper::adToAdDTO).collect(Collectors.toList());
-        } catch (Exception e) {
-            logger.error("An error occurred while getting all ads: {}", e.getMessage());
-            throw new AdNotFoundException("Failed to retrieve ads.", e);
-        }
+        List<AdDTO> adsList;
+        List<Ad> ads = adRepository.findAll();
+        adsList = ads.stream().map(adMapper::adToAdDTO).collect(Collectors.toList());
 
         int count = adsList.size();
         return new Ads(count, adsList);
     }
 
     public AdDTO createAd(CreateOrUpdateAd createOrUpdateAd, Integer userId, MultipartFile imageFile, Authentication authentication) {
-        try {
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new UnauthorizedException("Authentication required to create ad.");
-            }
+
+
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
 
@@ -72,24 +66,22 @@ public class AdService {
             ad = adRepository.save(ad);
 
             if (!imageFile.isEmpty()) {
-                String imageData = new String(imageFile.getBytes(), StandardCharsets.UTF_8);
-                ad.setImage(imageData);
-                adRepository.save(ad);
+                try {
+                    String imageData = new String(imageFile.getBytes(), StandardCharsets.UTF_8);
+                    ad.setImage(imageData);
+                    adRepository.save(ad);
+                } catch (IOException e) {
+                    logger.error("An error occurred while processing the image: {}", e.getMessage());
+                }
             }
 
             return adMapper.adToAdDTO(ad);
-        } catch (Exception e) {
-            logger.error("An error occurred while creating ad: {}", e.getMessage());
-            throw new RuntimeException("Failed to create ad.", e);
-        }
+
     }
 
 
     public ExtendedAd getExtendedAdById(Integer adId, Authentication authentication) {
-        try {
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new UnauthorizedException("Authentication required to get ad.");
-            }
+
             Optional<Ad> optionalAd = adRepository.findById(adId);
             Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
 
@@ -108,35 +100,24 @@ public class AdService {
                     ad.getTitle()
             );
 
-        } catch (Exception e) {
-            logger.error("An error occurred while getting extended ad by id {}: {}", adId, e.getMessage());
-            throw new RuntimeException("Failed to retrieve extended ad.", e);
-        }
+
     }
 
     public void deleteAd(Integer adId, Authentication authentication) {
 
-        try {
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new UnauthorizedException("Authentication required to delete ad.");
-            }
+
+
             Optional<Ad> optionalAd = adRepository.findById(adId);
             Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
             if (!isAdOwner(authentication, adId) && !hasAdminRole(authentication)) {
                 throw new ForbiddenException("Access forbidden to delete this ad.");
             }
             adRepository.deleteById(adId);
-        } catch (Exception e) {
-            logger.error("An error occurred while deleting ad with id {}: {}", adId, e.getMessage());
-            throw new RuntimeException("Failed to delete ad.", e);
-        }
+
     }
 
     public AdDTO updateAd(Integer adId, CreateOrUpdateAd createOrUpdateAd, Authentication authentication) {
-        try {
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new UnauthorizedException("Authentication required to update ad.");
-            }
+
 
             Optional<Ad> optionalAd = adRepository.findById(adId);
             Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
@@ -151,45 +132,37 @@ public class AdService {
             ad = adRepository.save(ad);
 
             return adMapper.adToAdDTO(ad);
-        } catch (Exception e) {
-            logger.error("An error occurred while updating ad with id {}: {}", adId, e.getMessage());
-            throw new RuntimeException("Failed to update ad.", e);
-        }
+
     }
 
     public List<AdDTO> getAdsForCurrentUser(Authentication authentication) {
-        try {
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new UnauthorizedException("Authentication required to get ads.");
-            }
+
             SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
             List<Ad> ads = adRepository.findByUserId(securityUser.getId());
             return ads.stream().map(adMapper::adToAdDTO).collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to retrieve ads for the current user.", e);
-        }
+
     }
 
 
     public void updateAdImage(Integer adId, MultipartFile imageData, Authentication authentication) {
-        try {
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new UnauthorizedException("Authentication required to update image.");
-            }
+
+
             Optional<Ad> optionalAd = adRepository.findById(adId);
             Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
             if (!isAdOwner(authentication, adId) && !hasAdminRole(authentication)) {
                 throw new ForbiddenException("Access forbidden to update this ad.");
             }
-            String imageFile = new String(imageData.getBytes(), StandardCharsets.UTF_8);
+            try {
+                String imageFile = new String(imageData.getBytes(), StandardCharsets.UTF_8);
 
-            ad.setImage(imageFile);
-            adRepository.save(ad);
-            logger.info("Image for Ad ID {} has been successfully updated.", adId);
+                ad.setImage(imageFile);
+                adRepository.save(ad);
+                logger.info("Image for Ad ID {} has been successfully updated.", adId);
+            }catch (IOException e){
+                logger.error("An error occurred while processing the image: {}", e.getMessage());
 
-        } catch (Exception e) {
-            logger.error("An error occurred while updating ad image for ID {}: {}", adId, e.getMessage());
-        }
+            }
+
     }
 
     private boolean isAdOwner(Authentication authentication, Integer adId) {

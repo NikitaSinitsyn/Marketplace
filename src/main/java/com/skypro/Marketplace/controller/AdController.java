@@ -7,6 +7,7 @@ import com.skypro.Marketplace.dto.ad.ExtendedAd;
 import com.skypro.Marketplace.dto.user.SecurityUser;
 import com.skypro.Marketplace.service.impl.AdService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class AdController {
         return ResponseEntity.ok(ads);
     }
 
-    @PostMapping("/")
+    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addAd(
             @RequestPart("image") MultipartFile imageFile,
             @RequestPart("properties") CreateOrUpdateAd createOrUpdateAd,
@@ -80,7 +81,7 @@ public class AdController {
 
     }
 
-    @PatchMapping("/{adId}/image")
+    @PatchMapping(value = "/{adId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateImage(
             @PathVariable Integer adId,
             @RequestParam("image") MultipartFile imageFile,
