@@ -40,7 +40,7 @@ public class CommentService {
         this.adRepository = adRepository;
     }
 
-    public Comments getCommentsByAdId(Integer adId, Authentication authentication) {
+    public Comments getCommentsByAdId(Integer adId) {
 
 
             List<Comment> comments = commentRepository.findByAdId(adId);
@@ -54,7 +54,7 @@ public class CommentService {
 
     }
 
-    public CommentDTO addComment(Integer adId, CreateOrUpdateComment CreateOrUpdateComment, Authentication authentication) {
+    public CommentDTO addComment(Integer adId, CreateOrUpdateComment CreateOrUpdateComment) {
 
             Optional<Ad> optionalAd = adRepository.findById(adId);
             Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
@@ -68,27 +68,22 @@ public class CommentService {
 
     }
 
-    public ResponseEntity<?> deleteComment(Integer commentId, Authentication authentication) {
+    public ResponseEntity<?> deleteComment(Integer commentId) {
 
 
             Optional<Comment> optionalComment = commentRepository.findById(commentId);
             Comment comment = optionalComment.orElseThrow(() -> new CommentNotFoundException("Comment not found with id: " + commentId));
-            if (!isCommentOwner(authentication, commentId) && !hasAdminRole(authentication)) {
-                throw new ForbiddenException("Access forbidden to update this ad.");
-            }
+
             commentRepository.deleteById(commentId);
             return ResponseEntity.ok().build();
 
     }
 
-    public CommentDTO updateComment(Integer commentId, CreateOrUpdateComment CreateOrUpdateComment, Authentication authentication) {
+    public CommentDTO updateComment(Integer commentId, CreateOrUpdateComment CreateOrUpdateComment) {
 
 
             Comment comment = commentRepository.findById(commentId)
                     .orElseThrow(() -> new CommentNotFoundException("Comment not found with id: " + commentId));
-            if (!isCommentOwner(authentication, commentId) && !hasAdminRole(authentication)) {
-                throw new ForbiddenException("Access forbidden to update this ad.");
-            }
 
             comment.setText(CreateOrUpdateComment.getText());
 

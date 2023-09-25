@@ -51,7 +51,7 @@ public class AdService {
         return new Ads(count, adsList);
     }
 
-    public AdDTO createAd(CreateOrUpdateAd createOrUpdateAd, Integer userId, MultipartFile imageFile, Authentication authentication) {
+    public AdDTO createAd(CreateOrUpdateAd createOrUpdateAd, Integer userId, MultipartFile imageFile) {
 
 
             User user = userRepository.findById(userId)
@@ -80,7 +80,7 @@ public class AdService {
     }
 
 
-    public ExtendedAd getExtendedAdById(Integer adId, Authentication authentication) {
+    public ExtendedAd getExtendedAdById(Integer adId) {
 
             Optional<Ad> optionalAd = adRepository.findById(adId);
             Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
@@ -103,27 +103,23 @@ public class AdService {
 
     }
 
-    public void deleteAd(Integer adId, Authentication authentication) {
+    public void deleteAd(Integer adId) {
 
 
 
             Optional<Ad> optionalAd = adRepository.findById(adId);
             Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
-            if (!isAdOwner(authentication, adId) && !hasAdminRole(authentication)) {
-                throw new ForbiddenException("Access forbidden to delete this ad.");
-            }
+
             adRepository.deleteById(adId);
 
     }
 
-    public AdDTO updateAd(Integer adId, CreateOrUpdateAd createOrUpdateAd, Authentication authentication) {
+    public AdDTO updateAd(Integer adId, CreateOrUpdateAd createOrUpdateAd) {
 
 
             Optional<Ad> optionalAd = adRepository.findById(adId);
             Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
-            if (!isAdOwner(authentication, adId) && !hasAdminRole(authentication)) {
-                throw new ForbiddenException("Access forbidden to update this ad.");
-            }
+
 
             ad.setTitle(createOrUpdateAd.getTitle());
             ad.setPrice(createOrUpdateAd.getPrice());
@@ -144,14 +140,12 @@ public class AdService {
     }
 
 
-    public void updateAdImage(Integer adId, MultipartFile imageData, Authentication authentication) {
+    public void updateAdImage(Integer adId, MultipartFile imageData) {
 
 
             Optional<Ad> optionalAd = adRepository.findById(adId);
             Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
-            if (!isAdOwner(authentication, adId) && !hasAdminRole(authentication)) {
-                throw new ForbiddenException("Access forbidden to update this ad.");
-            }
+
             try {
                 String imageFile = new String(imageData.getBytes(), StandardCharsets.UTF_8);
 

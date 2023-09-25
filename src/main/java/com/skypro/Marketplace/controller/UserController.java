@@ -39,7 +39,7 @@ public class UserController {
     public ResponseEntity<UserDTO> getUser(Authentication authentication) {
 
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
-        UserDTO user = userService.getUserByUsername(securityUser.getUsername(), authentication);
+        UserDTO user = userService.getUserByUsername(securityUser.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(user);
 
 
@@ -50,7 +50,7 @@ public class UserController {
     public ResponseEntity<UpdateUser> updateUser(@RequestBody UpdateUser updateUser, Authentication authentication) {
 
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
-        UpdateUser updatedUserProfile = userService.updateUserProfile(securityUser.getId(), updateUser, authentication);
+        UpdateUser updatedUserProfile = userService.updateUserProfile(securityUser.getId(), updateUser);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUserProfile);
 
 
@@ -62,7 +62,7 @@ public class UserController {
 
 
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
-        UserDTO currentUser = userService.updateProfileImage(securityUser.getId(), image, authentication);
+        UserDTO currentUser = userService.updateProfileImage(securityUser.getId(), image);
         return ResponseEntity.status(HttpStatus.OK).body(currentUser);
     }
 }

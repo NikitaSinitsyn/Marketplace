@@ -9,6 +9,7 @@ import com.skypro.Marketplace.service.impl.AdService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,47 +34,51 @@ public class AdController {
     }
 
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('USER') and (@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN'))")
     public ResponseEntity<?> addAd(
             @RequestPart("image") MultipartFile imageFile,
             @RequestPart("properties") CreateOrUpdateAd createOrUpdateAd,
             Authentication authentication
     ) {
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
-        AdDTO adDTO = adService.createAd(createOrUpdateAd, securityUser.getId(), imageFile, authentication);
+        AdDTO adDTO = adService.createAd(createOrUpdateAd, securityUser.getId(), imageFile);
         return ResponseEntity.status(HttpStatus.CREATED).body(adDTO);
     }
 
 
     @GetMapping("/{adId}")
-    public ResponseEntity<?> getAds(@PathVariable Integer adId, Authentication authentication) {
+    @PreAuthorize("hasRole('USER') and (@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN'))")
+    public ResponseEntity<?> getAds(@PathVariable Integer adId) {
 
-        ExtendedAd extendedAd = adService.getExtendedAdById(adId, authentication);
+        ExtendedAd extendedAd = adService.getExtendedAdById(adId);
         return ResponseEntity.status(HttpStatus.OK).body(extendedAd);
 
 
     }
 
     @DeleteMapping("/{adId}")
-    public ResponseEntity<Void> removeAd(@PathVariable Integer adId, Authentication authentication) {
+    @PreAuthorize("hasRole('USER') and (@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN'))")
+    public ResponseEntity<Void> removeAd(@PathVariable Integer adId) {
 
-        adService.deleteAd(adId, authentication);
+        adService.deleteAd(adId);
         return ResponseEntity.noContent().build();
 
     }
 
     @PatchMapping("/{adId}")
+    @PreAuthorize("hasRole('USER') and (@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN'))")
     public ResponseEntity<AdDTO> updateAds(
             @PathVariable Integer adId,
-            @RequestBody CreateOrUpdateAd createOrUpdateAd,
-            Authentication authentication
+            @RequestBody CreateOrUpdateAd createOrUpdateAd
     ) {
 
-        AdDTO updatedAd = adService.updateAd(adId, createOrUpdateAd, authentication);
+        AdDTO updatedAd = adService.updateAd(adId, createOrUpdateAd);
         return ResponseEntity.status(HttpStatus.OK).body(updatedAd);
 
     }
 
     @GetMapping("/me")
+    @PreAuthorize("hasRole('USER') and (@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN'))")
     public ResponseEntity<List<AdDTO>> getAdsMe(Authentication authentication) {
 
         List<AdDTO> ads = adService.getAdsForCurrentUser(authentication);
@@ -82,12 +87,12 @@ public class AdController {
     }
 
     @PatchMapping(value = "/{adId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('USER') and (@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN'))")
     public ResponseEntity<String> updateImage(
             @PathVariable Integer adId,
-            @RequestParam("image") MultipartFile imageFile,
-            Authentication authentication
+            @RequestParam("image") MultipartFile imageFile
     ) {
-        adService.updateAdImage(adId, imageFile, authentication);
+        adService.updateAdImage(adId, imageFile);
         return ResponseEntity.status(HttpStatus.OK).body("Image updated successfully.");
 
     }

@@ -69,13 +69,13 @@ public class UserService {
 
     }
 
-    public UserDTO getUserByUsername(String username, Authentication authentication) {
+    public UserDTO getUserByUsername(String username) {
 
         return userRepository.findByEmail(username);
     }
 
 
-    public UpdateUser updateUserProfile(Integer userId, UpdateUser updateUser, Authentication authentication) {
+    public UpdateUser updateUserProfile(Integer userId, UpdateUser updateUser) {
 
 
             User user = userRepository.findById(userId)
@@ -97,7 +97,7 @@ public class UserService {
 
     }
 
-    public UserDTO updateProfileImage(Integer userId, MultipartFile image, Authentication authentication) {
+    public UserDTO updateProfileImage(Integer userId, MultipartFile image) {
 
 
             User user = userRepository.findById(userId)
