@@ -34,7 +34,6 @@ public class AdController {
     }
 
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or @adService.hasRole('ADMIN')")
     public ResponseEntity<?> addAd(
             @RequestPart("image") MultipartFile imageFile,
             @RequestPart("properties") CreateOrUpdateAd createOrUpdateAd,

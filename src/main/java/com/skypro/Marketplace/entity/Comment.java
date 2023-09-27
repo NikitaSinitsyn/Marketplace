@@ -20,8 +20,6 @@ public class Comment {
     @JoinColumn(name = "user_id")
     private User author;
 
-
-
     @Column(name = "created_at")
     private Long createdAt;
 
