@@ -8,6 +8,7 @@ import com.skypro.Marketplace.service.impl.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,12 +26,12 @@ public class UserController {
 
 
     @PutMapping("/setPassword")
+    @PreAuthorize("(#authentication.principal.id == #securityUser.id) or hasRole('ADMIN')")
     public ResponseEntity<?> setPassword(@RequestBody NewPassword newPassword, Authentication authentication) {
 
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
-        boolean passwordChanged = userService.changePassword(securityUser.getId(), newPassword, authentication);
+        boolean passwordChanged = userService.changePassword(securityUser.getId(), newPassword);
         return ResponseEntity.status(HttpStatus.OK).body(passwordChanged);
-
 
     }
 

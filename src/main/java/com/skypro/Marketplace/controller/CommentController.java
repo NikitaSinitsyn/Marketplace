@@ -28,7 +28,6 @@ public class CommentController {
         Comments comments = commentService.getCommentsByAdId(adId);
         return ResponseEntity.status(HttpStatus.OK).body(comments);
 
-
     }
 
     @PostMapping("/")
@@ -40,13 +39,13 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    @PreAuthorize("hasRole('USER') and (@commentService.isCommentOwner(authentication, #commentId) or hasRole('ADMIN'))")
+    @PreAuthorize("@commentService.isCommentOwner(authentication, #commentId) or @commentService.hasRole('ADMIN')")
     public ResponseEntity<?> deleteComment(@PathVariable Integer commentId) {
         return commentService.deleteComment(commentId);
     }
 
     @PatchMapping("/{commentId}")
-    @PreAuthorize("hasRole('USER') and (@commentService.isCommentOwner(authentication, #commentId) or hasRole('ADMIN'))")
+    @PreAuthorize("@commentService.isCommentOwner(authentication, #commentId) or @commentService.hasRole('ADMIN')")
     public ResponseEntity<CommentDTO> updateComment(@PathVariable Integer commentId, @RequestBody CreateOrUpdateComment CreateOrUpdateComment) {
 
         CommentDTO updatedComment = commentService.updateComment(commentId, CreateOrUpdateComment);

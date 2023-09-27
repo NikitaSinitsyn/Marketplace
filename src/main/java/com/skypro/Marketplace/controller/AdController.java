@@ -34,7 +34,7 @@ public class AdController {
     }
 
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('USER') and (@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN'))")
+    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or @adService.hasRole('ADMIN')")
     public ResponseEntity<?> addAd(
             @RequestPart("image") MultipartFile imageFile,
             @RequestPart("properties") CreateOrUpdateAd createOrUpdateAd,
@@ -47,7 +47,7 @@ public class AdController {
 
 
     @GetMapping("/{adId}")
-    @PreAuthorize("hasRole('USER') and (@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN'))")
+    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or @adService.hasRole('ADMIN')")
     public ResponseEntity<?> getAds(@PathVariable Integer adId) {
 
         ExtendedAd extendedAd = adService.getExtendedAdById(adId);
@@ -57,7 +57,7 @@ public class AdController {
     }
 
     @DeleteMapping("/{adId}")
-    @PreAuthorize("hasRole('USER') and (@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN'))")
+    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or @adService.hasRole('ADMIN')")
     public ResponseEntity<Void> removeAd(@PathVariable Integer adId) {
 
         adService.deleteAd(adId);

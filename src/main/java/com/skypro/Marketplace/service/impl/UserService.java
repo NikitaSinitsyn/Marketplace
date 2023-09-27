@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 
 @Service
@@ -40,14 +42,11 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-
-    public boolean changePassword(Integer userId, NewPassword newPassword, Authentication authentication) {
-
-
-            User authenticatedUser = (User) authentication.getPrincipal();
+    @Transactional
+    public boolean changePassword(Integer userId, NewPassword newPassword) {
 
 
-            if (authenticatedUser.getId().equals(userId)) {
+
                 Optional<User> userOptional = userRepository.findById(userId);
                 if (userOptional.isPresent()) {
                     User user = userOptional.get();
@@ -62,10 +61,7 @@ public class UserService {
                 } else {
                     throw new UsernameNotFoundException("User not found with id: " + userId);
                 }
-            } else {
 
-                throw new ForbiddenException("Access forbidden to change password for another user.");
-            }
 
     }
 
@@ -75,6 +71,7 @@ public class UserService {
     }
 
 
+    @Transactional
     public UpdateUser updateUserProfile(Integer userId, UpdateUser updateUser) {
 
 
@@ -97,6 +94,7 @@ public class UserService {
 
     }
 
+    @Transactional
     public UserDTO updateProfileImage(Integer userId, MultipartFile image) {
 
 
@@ -109,17 +107,16 @@ public class UserService {
             String fileName = userId + "_" + image.getOriginalFilename();
             Path filePath = Paths.get(imagePath, fileName);
 
-            try (OutputStream os = Files.newOutputStream(filePath)) {
-                os.write(image.getBytes());
+            try  {
+                Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                user.setImage(fileName);
+                userRepository.save(user);
+                return userMapper.userToUserDTO(user);
             } catch (IOException e) {
                 logger.error("Error writing image file for user with id {}: {}", userId, e.getMessage());
                 throw new RuntimeException("Failed to write image file.", e);
             }
 
-            user.setImage(fileName);
-
-            userRepository.save(user);
-            return userMapper.userToUserDTO(user);
 
     }
 

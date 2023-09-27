@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +55,7 @@ public class CommentService {
 
     }
 
+    @Transactional
     public CommentDTO addComment(Integer adId, CreateOrUpdateComment CreateOrUpdateComment) {
 
             Optional<Ad> optionalAd = adRepository.findById(adId);
@@ -68,6 +70,7 @@ public class CommentService {
 
     }
 
+    @Transactional
     public ResponseEntity<?> deleteComment(Integer commentId) {
 
 
@@ -79,6 +82,7 @@ public class CommentService {
 
     }
 
+    @Transactional
     public CommentDTO updateComment(Integer commentId, CreateOrUpdateComment CreateOrUpdateComment) {
 
 

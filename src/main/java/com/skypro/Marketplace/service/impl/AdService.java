@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -51,6 +52,7 @@ public class AdService {
         return new Ads(count, adsList);
     }
 
+    @Transactional
     public AdDTO createAd(CreateOrUpdateAd createOrUpdateAd, Integer userId, MultipartFile imageFile) {
 
 
@@ -102,7 +104,7 @@ public class AdService {
 
 
     }
-
+    @Transactional
     public void deleteAd(Integer adId) {
 
 
@@ -113,7 +115,7 @@ public class AdService {
             adRepository.deleteById(adId);
 
     }
-
+    @Transactional
     public AdDTO updateAd(Integer adId, CreateOrUpdateAd createOrUpdateAd) {
 
 
@@ -139,13 +141,13 @@ public class AdService {
 
     }
 
-
+    @Transactional
     public void updateAdImage(Integer adId, MultipartFile imageData) {
 
 
             Optional<Ad> optionalAd = adRepository.findById(adId);
             Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
-
+        if (imageData != null && !imageData.isEmpty()) {
             try {
                 String imageFile = new String(imageData.getBytes(), StandardCharsets.UTF_8);
 
@@ -154,8 +156,10 @@ public class AdService {
                 logger.info("Image for Ad ID {} has been successfully updated.", adId);
             }catch (IOException e){
                 logger.error("An error occurred while processing the image: {}", e.getMessage());
-
             }
+        } else {
+            logger.warn("No image data provided for Ad ID {}. Image not updated.", adId);
+        }
 
     }
 

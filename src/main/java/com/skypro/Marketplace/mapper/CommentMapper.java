@@ -10,13 +10,15 @@ import org.mapstruct.factory.Mappers;
 public interface CommentMapper {
 
     @Mapping(source = "id", target = "pk")
+    @Mapping(target = "authorImage", source = "author.image")
+    @Mapping(target = "authorFirstName", source = "author.firstName")
     CommentDTO commentToCommentDTO(Comment comment);
 
-    default Integer mapUserToInteger(User user) {
-        return user != null ? user.getId() : null;
-    }
 
-    default User mapIntegerToUser(Integer userId) {
+    @Mapping(source = "pk", target = "id")
+    Comment commentDTOToComment(CommentDTO commentDTO);
+
+    default User map(Integer userId) {
         if (userId != null) {
             User user = new User();
             user.setId(userId);
@@ -25,30 +27,7 @@ public interface CommentMapper {
         return null;
     }
 
-    default Integer mapAdToInteger(Ad ad) {
-        return ad != null ? ad.getId() : null;
+    default Integer map(User user) {
+        return user != null ? user.getId() : null;
     }
-
-    default Ad mapIntegerToAd(Integer adId) {
-        if (adId != null) {
-            Ad ad = new Ad();
-            ad.setId(adId);
-            return ad;
-        }
-        return null;
-    }
-
-    @AfterMapping
-    default void mapUserAndCreatedAt(Comment comment, @MappingTarget CommentDTO commentDTO) {
-        if (comment != null) {
-            commentDTO.setAuthor(mapUserToInteger(comment.getAuthor()));
-            commentDTO.setAuthorImage(comment.getAuthorImage());
-            commentDTO.setAuthorFirstName(comment.getAuthorFirstName());
-            commentDTO.setCreatedAt(comment.getCreatedAt());
-            commentDTO.setText(comment.getText());
-        }
-    }
-
-    @Mapping(source = "pk", target = "id")
-    Comment commentDTOToComment(CommentDTO commentDTO);
 }

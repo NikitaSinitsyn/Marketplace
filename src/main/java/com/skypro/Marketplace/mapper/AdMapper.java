@@ -11,27 +11,12 @@ import org.mapstruct.Named;
 public interface AdMapper {
 
     @Mapping(source = "id", target = "pk")
-    @Mapping(source = "user", target = "author", qualifiedByName = "mapUserToInteger")
-
+    @Mapping(source = "user", target = "author")
     AdDTO adToAdDTO(Ad ad);
 
     @Mapping(source = "pk", target = "id")
-    @Mapping(source = "author", target = "user", qualifiedByName = "mapIntegerToUser")
-
+    @Mapping(source = "author", target = "user")
     Ad adDTOToAd(AdDTO adDTO);
 
-    @Named("mapUserToInteger")
-    default Integer mapUserToInteger(User user) {
-        return user != null ? user.getId() : null;
-    }
 
-    @Named("mapIntegerToUser")
-    default User mapIntegerToUser(Integer userId) {
-        if (userId != null) {
-            User user = new User();
-            user.setId(userId);
-            return user;
-        }
-        return null;
-    }
 }
