@@ -46,7 +46,7 @@ public class AdController {
 
 
     @GetMapping("/{adId}")
-    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or @adService.hasRole('ADMIN')")
+    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
     public ResponseEntity<?> getAds(@PathVariable Integer adId) {
 
         ExtendedAd extendedAd = adService.getExtendedAdById(adId);
@@ -56,7 +56,7 @@ public class AdController {
     }
 
     @DeleteMapping("/{adId}")
-    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or @adService.hasRole('ADMIN')")
+    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
     public ResponseEntity<Void> removeAd(@PathVariable Integer adId) {
 
         adService.deleteAd(adId);
@@ -65,7 +65,7 @@ public class AdController {
     }
 
     @PatchMapping("/{adId}")
-    @PreAuthorize("hasRole('USER') and (@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN'))")
+    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
     public ResponseEntity<AdDTO> updateAds(
             @PathVariable Integer adId,
             @RequestBody CreateOrUpdateAd createOrUpdateAd
@@ -77,7 +77,7 @@ public class AdController {
     }
 
     @GetMapping("/me")
-    @PreAuthorize("hasRole('USER') and (@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN'))")
+    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
     public ResponseEntity<List<AdDTO>> getAdsMe(Authentication authentication) {
 
         List<AdDTO> ads = adService.getAdsForCurrentUser(authentication);
@@ -86,7 +86,7 @@ public class AdController {
     }
 
     @PatchMapping(value = "/{adId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('USER') and (@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN'))")
+    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
     public ResponseEntity<String> updateImage(
             @PathVariable Integer adId,
             @RequestParam("image") MultipartFile imageFile

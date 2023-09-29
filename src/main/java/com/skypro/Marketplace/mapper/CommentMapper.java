@@ -12,22 +12,13 @@ public interface CommentMapper {
     @Mapping(source = "id", target = "pk")
     @Mapping(target = "authorImage", source = "author.image")
     @Mapping(target = "authorFirstName", source = "author.firstName")
+    @Mapping(source = "author.id", target = "author")
     CommentDTO commentToCommentDTO(Comment comment);
 
 
     @Mapping(source = "pk", target = "id")
+    @Mapping(source = "author", target = "author.id")
     Comment commentDTOToComment(CommentDTO commentDTO);
 
-    default User map(Integer userId) {
-        if (userId != null) {
-            User user = new User();
-            user.setId(userId);
-            return user;
-        }
-        return null;
-    }
 
-    default Integer map(User user) {
-        return user != null ? user.getId() : null;
-    }
 }

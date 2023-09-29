@@ -11,11 +11,11 @@ import org.mapstruct.Named;
 public interface AdMapper {
 
     @Mapping(source = "id", target = "pk")
-    @Mapping(source = "user", target = "author")
+    @Mapping(source = "user.id", target = "author")
     AdDTO adToAdDTO(Ad ad);
 
     @Mapping(source = "pk", target = "id")
-    @Mapping(source = "author", target = "user")
+    @Mapping(source = "author", target = "user.id")
     Ad adDTOToAd(AdDTO adDTO);
 
 

@@ -26,7 +26,6 @@ public class UserController {
 
 
     @PutMapping("/setPassword")
-    @PreAuthorize("(#authentication.principal.id == #securityUser.id) or hasRole('ADMIN')")
     public ResponseEntity<?> setPassword(@RequestBody NewPassword newPassword, Authentication authentication) {
 
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
