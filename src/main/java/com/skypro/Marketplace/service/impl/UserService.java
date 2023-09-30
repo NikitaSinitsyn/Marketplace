@@ -1,26 +1,26 @@
 package com.skypro.Marketplace.service.impl;
 
 import com.skypro.Marketplace.dto.user.NewPassword;
+import com.skypro.Marketplace.dto.user.SecurityUser;
 import com.skypro.Marketplace.dto.user.UpdateUser;
 import com.skypro.Marketplace.dto.user.UserDTO;
 import com.skypro.Marketplace.entity.User;
-import com.skypro.Marketplace.exception.ForbiddenException;
-import com.skypro.Marketplace.exception.UnauthorizedException;
 import com.skypro.Marketplace.exception.UserNotFoundException;
 import com.skypro.Marketplace.mapper.UserMapper;
 import com.skypro.Marketplace.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.stream.Collectors;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,7 +28,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -67,7 +67,13 @@ public class UserService {
 
     public UserDTO getUserByUsername(String username) {
 
-        return userRepository.findByEmail(username);
+        Optional<User> userOptional = userRepository.findByEmail(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return userMapper.userToUserDTO(Optional.of(user));
+        } else {
+            throw new UserNotFoundException("User not found");
+        }
     }
 
 
@@ -111,7 +117,7 @@ public class UserService {
                 Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
                 user.setImage(fileName);
                 userRepository.save(user);
-                return userMapper.userToUserDTO(user);
+                return userMapper.userToUserDTO(Optional.of(user));
             } catch (IOException e) {
                 logger.error("Error writing image file for user with id {}: {}", userId, e.getMessage());
                 throw new RuntimeException("Failed to write image file.", e);
@@ -120,5 +126,12 @@ public class UserService {
 
     }
 
-
+    @Transactional(readOnly = true)
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException  {
+        return userRepository
+                .findByEmail(email)
+                .map(SecurityUser::from)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
 }

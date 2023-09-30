@@ -122,4 +122,8 @@ public class SecurityUser implements UserDetails {
         return true;
     }
 
+    public static SecurityUser from(User user) {
+        return new SecurityUser(user.getId(), user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getPhone(), user.getRole());
+    }
+
 }

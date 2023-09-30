@@ -52,7 +52,7 @@ public class AdService {
         return new Ads(count, adsList);
     }
 
-    @Transactional
+    //@Transactional
     public AdDTO createAd(CreateOrUpdateAd createOrUpdateAd, Integer userId, MultipartFile imageFile) {
 
 
