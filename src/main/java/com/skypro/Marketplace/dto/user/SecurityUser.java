@@ -14,17 +14,17 @@ import java.util.stream.Collectors;
 
 public class SecurityUser implements UserDetails {
 
-    @Getter
+
     private Integer id;
     private String username;
     private String password;
-    @Getter
+
     private String firstName;
-    @Getter
+
     private String lastName;
-    @Getter
+
     private String phone;
-    @Getter
+
     private Role role;
 
     public SecurityUser(Integer id, String username, String password, String firstName, String lastName, String phone, Role role) {

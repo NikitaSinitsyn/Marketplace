@@ -36,18 +36,6 @@ public class WebSecurityConfig  {
         this.dataSource = dataSource;
     }
 
-//    @Bean
-//    public UserDetailsManager userDetailsManager() {
-//        JdbcUserDetailsManager manager = new JdbcUserDetailsManager();
-//        manager.setDataSource(dataSource);
-//        manager.setUsersByUsernameQuery(
-//                "SELECT email as username, password, true FROM app_user WHERE email = ?");
-//        manager.setAuthoritiesByUsernameQuery(
-//                "SELECT email, role FROM app_user WHERE email = ?");
-//        return manager;
-//    }
-
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf()
@@ -57,7 +45,7 @@ public class WebSecurityConfig  {
                                 authorization
                                         .mvcMatchers(AUTH_WHITELIST)
                                         .permitAll()
-                                        .mvcMatchers(HttpMethod.GET, "/ads/")
+                                        .mvcMatchers(HttpMethod.GET, "/ads")
                                         .permitAll()
                                         .mvcMatchers("/ads/**", "/users/**")
                                         .authenticated())

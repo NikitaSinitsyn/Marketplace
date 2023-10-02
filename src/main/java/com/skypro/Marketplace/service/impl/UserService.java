@@ -67,13 +67,10 @@ public class UserService implements UserDetailsService {
 
     public UserDTO getUserByUsername(String username) {
 
-        Optional<User> userOptional = userRepository.findByEmail(username);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            return userMapper.userToUserDTO(Optional.of(user));
-        } else {
-            throw new UserNotFoundException("User not found");
-        }
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+            return userMapper.userToUserDTO(user);
+
     }
 
 
@@ -117,7 +114,7 @@ public class UserService implements UserDetailsService {
                 Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
                 user.setImage(fileName);
                 userRepository.save(user);
-                return userMapper.userToUserDTO(Optional.of(user));
+                return userMapper.userToUserDTO(user);
             } catch (IOException e) {
                 logger.error("Error writing image file for user with id {}: {}", userId, e.getMessage());
                 throw new RuntimeException("Failed to write image file.", e);
