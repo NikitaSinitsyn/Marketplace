@@ -1,14 +1,14 @@
 package com.skypro.Marketplace.entity;
 
 
-import lombok.Builder;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
+/**
+ * Represents a user in the marketplace.
+ */
 @Entity
 @Table(name = "app_user")
 public class User{

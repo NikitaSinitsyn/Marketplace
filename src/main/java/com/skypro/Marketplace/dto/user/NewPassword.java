@@ -1,15 +1,22 @@
 package com.skypro.Marketplace.dto.user;
 
-import lombok.*;
-
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
-
+/**
+ * Data Transfer Object (DTO) for updating a user's password.
+ */
 public class NewPassword {
+
+    /**
+     * The current password of the user.
+     */
     @Size(min = 8, max = 16, message = "Длина текущего пароля должна быть от 8 до 16 символов")
     private String currentPassword;
 
+    /**
+     * The new password to set for the user.
+     */
     @Size(min = 8, max = 16, message = "Длина нового пароля должна быть от 8 до 16 символов")
     private String newPassword;
 

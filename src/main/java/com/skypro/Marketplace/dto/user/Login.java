@@ -1,13 +1,20 @@
 package com.skypro.Marketplace.dto.user;
 
-import lombok.*;
-
 import java.util.Objects;
 
-
+/**
+ * Data Transfer Object (DTO) for representing user login credentials.
+ */
 public class Login {
 
+    /**
+     * The username used for authentication.
+     */
     private String username;
+
+    /**
+     * The password used for authentication.
+     */
     private String password;
 
     public Login(String username, String password) {

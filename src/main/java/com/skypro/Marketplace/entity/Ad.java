@@ -1,13 +1,13 @@
 package com.skypro.Marketplace.entity;
 
-import lombok.*;
-
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents an advertisement in the marketplace.
+ */
 @Entity
 @Table(name = "ad")
 public class Ad {

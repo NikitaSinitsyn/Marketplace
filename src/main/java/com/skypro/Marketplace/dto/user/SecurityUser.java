@@ -2,29 +2,52 @@ package com.skypro.Marketplace.dto.user;
 
 import com.skypro.Marketplace.entity.Role;
 import com.skypro.Marketplace.entity.User;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
 
+/**
+ * Data Transfer Object (DTO) for representing a user in a security context.
+ * This is used for Spring Security.
+ */
 public class SecurityUser implements UserDetails {
 
-
+    /**
+     * The unique identifier of the user.
+     */
     private Integer id;
+
+    /**
+     * The username used for authentication.
+     */
     private String username;
+
+    /**
+     * The password used for authentication.
+     */
     private String password;
 
+    /**
+     * The first name of the user.
+     */
     private String firstName;
 
+    /**
+     * The last name of the user.
+     */
     private String lastName;
 
+    /**
+     * The phone number of the user.
+     */
     private String phone;
 
+    /**
+     * The role assigned to the user.
+     */
     private Role role;
 
     public SecurityUser(Integer id, String username, String password, String firstName, String lastName, String phone, Role role) {

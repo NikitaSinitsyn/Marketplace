@@ -4,14 +4,44 @@ import com.skypro.Marketplace.entity.Role;
 
 import java.util.Objects;
 
-
+/**
+ * Data Transfer Object (DTO) for representing user information.
+ */
 public class UserDTO {
+
+    /**
+     * The unique identifier of the user.
+     */
     private Integer id;
+
+    /**
+     * The email address of the user.
+     */
     private String email;
+
+    /**
+     * The first name of the user.
+     */
     private String firstName;
+
+    /**
+     * The last name of the user.
+     */
     private String lastName;
+
+    /**
+     * The phone number of the user.
+     */
     private String phone;
+
+    /**
+     * The role assigned to the user.
+     */
     private Role role;
+
+    /**
+     * The image associated with the user.
+     */
     private String image;
 
 

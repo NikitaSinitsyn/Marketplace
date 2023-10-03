@@ -1,13 +1,21 @@
 package com.skypro.Marketplace.dto.ad;
 
-import lombok.*;
-
 import java.util.List;
 import java.util.Objects;
 
-
+/**
+ * Data Transfer Object (DTO) for representing a list of advertisements.
+ */
 public class Ads {
+
+    /**
+     * Count of advertisements in the list.
+     */
     private Integer count;
+
+    /**
+     * List of advertisements.
+     */
     private List<AdDTO> results;
 
     public Ads(Integer count, List<AdDTO> results) {

@@ -9,8 +9,6 @@ import com.skypro.Marketplace.entity.Ad;
 import com.skypro.Marketplace.entity.Comment;
 import com.skypro.Marketplace.exception.AdNotFoundException;
 import com.skypro.Marketplace.exception.CommentNotFoundException;
-import com.skypro.Marketplace.exception.ForbiddenException;
-import com.skypro.Marketplace.exception.UnauthorizedException;
 import com.skypro.Marketplace.mapper.CommentMapper;
 import com.skypro.Marketplace.repository.AdRepository;
 import com.skypro.Marketplace.repository.CommentRepository;
@@ -26,6 +24,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Service for managing comments on advertisements.
+ */
 @Service
 public class CommentService {
 
@@ -41,8 +42,13 @@ public class CommentService {
         this.adRepository = adRepository;
     }
 
+    /**
+     * Get comments for a specific advertisement by its ID.
+     *
+     * @param adId Advertisement ID.
+     * @return Comments for the specified advertisement.
+     */
     public Comments getCommentsByAdId(Integer adId) {
-
 
             List<Comment> comments = commentRepository.findByAdId(adId);
             if (comments.isEmpty()) {
@@ -52,9 +58,15 @@ public class CommentService {
                     .map(commentMapper::commentToCommentDTO)
                     .collect(Collectors.toList());
             return new Comments(commentDTOs.size(), commentDTOs);
-
     }
 
+    /**
+     * Add a new comment to an advertisement.
+     *
+     * @param adId               Advertisement ID.
+     * @param CreateOrUpdateComment Comment data to be added.
+     * @return Created comment data.
+     */
     @Transactional
     public CommentDTO addComment(Integer adId, CreateOrUpdateComment CreateOrUpdateComment) {
 
@@ -67,24 +79,33 @@ public class CommentService {
             comment = commentRepository.save(comment);
 
             return commentMapper.commentToCommentDTO(comment);
-
     }
 
+    /**
+     * Delete a comment by its ID.
+     *
+     * @param commentId Comment ID.
+     * @return HTTP response indicating success.
+     */
     @Transactional
     public ResponseEntity<?> deleteComment(Integer commentId) {
-
 
             Optional<Comment> optionalComment = commentRepository.findById(commentId);
             Comment comment = optionalComment.orElseThrow(() -> new CommentNotFoundException("Comment not found with id: " + commentId));
 
             commentRepository.deleteById(commentId);
             return ResponseEntity.ok().build();
-
     }
 
+    /**
+     * Update a comment by its ID.
+     *
+     * @param commentId           Comment ID.
+     * @param CreateOrUpdateComment Updated comment data.
+     * @return Updated comment data.
+     */
     @Transactional
     public CommentDTO updateComment(Integer commentId, CreateOrUpdateComment CreateOrUpdateComment) {
-
 
             Comment comment = commentRepository.findById(commentId)
                     .orElseThrow(() -> new CommentNotFoundException("Comment not found with id: " + commentId));
@@ -94,10 +115,15 @@ public class CommentService {
             comment = commentRepository.save(comment);
 
             return commentMapper.commentToCommentDTO(comment);
-
-
     }
 
+    /**
+     * Check if the authenticated user is the owner of a comment.
+     *
+     * @param authentication Information about the current user's authentication.
+     * @param commentId      Comment ID.
+     * @return True if the user is the owner, false otherwise.
+     */
     private boolean isCommentOwner(Authentication authentication, Integer commentId) {
         if (authentication != null && authentication.isAuthenticated()) {
             SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
@@ -106,6 +132,12 @@ public class CommentService {
         return false;
     }
 
+    /**
+     * Check if the authenticated user has the admin role.
+     *
+     * @param authentication Information about the current user's authentication.
+     * @return True if the user has the admin role, false otherwise.
+     */
     private boolean hasAdminRole(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
             return authentication.getAuthorities().stream()

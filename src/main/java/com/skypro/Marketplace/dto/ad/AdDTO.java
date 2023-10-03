@@ -2,13 +2,34 @@ package com.skypro.Marketplace.dto.ad;
 
 import java.util.Objects;
 
-
-
+/**
+ * Data Transfer Object (DTO) for representing an advertisement.
+ */
 public class AdDTO {
+
+    /**
+     * Unique identifier of the advertisement.
+     */
     private Integer pk;
+
+    /**
+     * Title of the advertisement.
+     */
     private String title;
+
+    /**
+     * Price of the advertisement.
+     */
     private Integer price;
+
+    /**
+     * Identifier of the author of the advertisement.
+     */
     private Integer author;
+
+    /**
+     * Image of the advertisement in string format.
+     */
     private String image;
 
 

@@ -1,19 +1,55 @@
 package com.skypro.Marketplace.dto.ad;
 
-import lombok.*;
-
 import java.util.Objects;
 
-
+/**
+ * Data Transfer Object (DTO) for representing extended information about an advertisement.
+ */
 public class ExtendedAd {
+
+    /**
+     * Unique identifier of the advertisement.
+     */
     private Integer pk;
+
+    /**
+     * First name of the author of the advertisement.
+     */
     private String authorFirstName;
+
+    /**
+     * Last name of the author of the advertisement.
+     */
     private String authorLastName;
+
+    /**
+     * Description of the advertisement.
+     */
     private String description;
+
+    /**
+     * Email of the author of the advertisement.
+     */
     private String email;
+
+    /**
+     * Image of the advertisement in string format.
+     */
     private String image;
+
+    /**
+     * Phone number of the author of the advertisement.
+     */
     private String phone;
+
+    /**
+     * Price of the advertisement.
+     */
     private Integer price;
+
+    /**
+     * Title of the advertisement.
+     */
     private String title;
 
     public ExtendedAd(Integer pk, String authorFirstName, String authorLastName, String description, String email, String image, String phone, Integer price, String title) {

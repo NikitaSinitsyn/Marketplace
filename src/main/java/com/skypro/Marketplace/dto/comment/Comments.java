@@ -1,13 +1,21 @@
 package com.skypro.Marketplace.dto.comment;
 
-import lombok.*;
-
 import java.util.List;
 import java.util.Objects;
 
-
+/**
+ * Data Transfer Object (DTO) for representing a list of comments.
+ */
 public class Comments {
+
+    /**
+     * Count of comments in the list.
+     */
     private Integer count;
+
+    /**
+     * List of comments.
+     */
     private List<CommentDTO> results;
 
     public Comments(Integer count, List<CommentDTO> results) {

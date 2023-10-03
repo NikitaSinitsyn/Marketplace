@@ -1,13 +1,17 @@
 package com.skypro.Marketplace.dto.comment;
 
-import lombok.*;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
-
+/**
+ * Data Transfer Object (DTO) for creating or updating a comment.
+ */
 public class CreateOrUpdateComment {
+
+    /**
+     * Text content of the comment.
+     */
     @NotEmpty(message = "Текст комментария не может быть пустым")
     @Size(min = 8, max = 64, message = "Текст комментария должен содержать от 8 до 64 символов")
     private String text;

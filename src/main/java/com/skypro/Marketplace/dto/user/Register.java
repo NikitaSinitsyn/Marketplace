@@ -1,18 +1,42 @@
 package com.skypro.Marketplace.dto.user;
 
 import com.skypro.Marketplace.entity.Role;
-import lombok.*;
 
 import java.util.Objects;
 
-
+/**
+ * Data Transfer Object (DTO) for user registration.
+ */
 public class Register {
 
+    /**
+     * The username chosen by the user during registration.
+     */
     private String username;
+
+    /**
+     * The password chosen by the user during registration.
+     */
     private String password;
+
+    /**
+     * The first name of the user.
+     */
     private String firstName;
+
+    /**
+     * The last name of the user.
+     */
     private String lastName;
+
+    /**
+     * The phone number of the user.
+     */
     private String phone;
+
+    /**
+     * The role assigned to the user during registration.
+     */
     private Role role;
 
     public Register(String username, String password, String firstName, String lastName, String phone, Role role) {

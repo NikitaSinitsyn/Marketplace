@@ -1,13 +1,24 @@
 package com.skypro.Marketplace.dto.user;
 
-import lombok.*;
-
 import java.util.Objects;
 
-
+/**
+ * Data Transfer Object (DTO) for updating user information.
+ */
 public class UpdateUser {
+    /**
+     * The updated first name of the user.
+     */
     private String firstName;
+
+    /**
+     * The updated last name of the user.
+     */
     private String lastName;
+
+    /**
+     * The updated phone number of the user.
+     */
     private String phone;
 
     public UpdateUser(String firstName, String lastName, String phone) {

@@ -1,17 +1,40 @@
 package com.skypro.Marketplace.dto.comment;
 
-import com.skypro.Marketplace.entity.User;
-import lombok.*;
-
 import java.util.Objects;
 
-
+/**
+ * Data Transfer Object (DTO) for representing a comment.
+ */
 public class CommentDTO {
+
+    /**
+     * Unique identifier of the comment.
+     */
     private Integer pk;
+
+    /**
+     * Identifier of the comment author.
+     */
     private Integer author;
+
+    /**
+     * Image of the comment author in string format.
+     */
     private String authorImage;
+
+    /**
+     * First name of the comment author.
+     */
     private String authorFirstName;
+
+    /**
+     * Timestamp when the comment was created.
+     */
     private Long createdAt;
+
+    /**
+     * Text content of the comment.
+     */
     private String text;
 
 

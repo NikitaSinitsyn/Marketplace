@@ -1,13 +1,11 @@
 package com.skypro.Marketplace.entity;
 
-import com.fasterxml.jackson.databind.deser.UnresolvedId;
-import lombok.*;
-
 import javax.persistence.*;
 import java.util.Objects;
 
-
-
+/**
+ * Represents a comment on an advertisement in the marketplace.
+ */
 @Entity
 @Table(name = "comment")
 public class Comment {
