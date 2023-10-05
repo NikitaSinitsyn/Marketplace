@@ -5,6 +5,7 @@ import com.skypro.Marketplace.dto.user.SecurityUser;
 import com.skypro.Marketplace.dto.user.UpdateUser;
 import com.skypro.Marketplace.dto.user.UserDTO;
 import com.skypro.Marketplace.service.impl.UserService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -89,14 +90,25 @@ public class UserController {
     }
 
     /**
-     * Retrieves a user's image based on the provided user ID and image name.
+     * Retrieves a user's image as a byte array and returns it as a ResponseEntity with appropriate HTTP headers.
      *
-     * @param imageName The name of the image.
-     * @return ResponseEntity containing the image as a byte array and appropriate HTTP headers.
+     * @param imageName The name of the user's image.
+     * @param authentication The authentication object containing the user's security information.
+     * @return ResponseEntity containing the user's image as a byte array and appropriate HTTP headers.
      */
     @GetMapping(value = "/me/images", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*"})
-    public ResponseEntity<byte[]> getUserImage( @PathVariable String imageName, Authentication authentication) {
+    public ResponseEntity<byte[]> getUserImage(@PathVariable String imageName, Authentication authentication) {
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
-        return userService.getUserImage(securityUser.getId(), imageName);
+        byte[] imageBytes = userService.getUserImage(securityUser.getId(), imageName);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+
+        if (imageBytes.length > 0) {
+            return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+        } else {
+            byte[] defaultImageBytes = userService.getDefaultImageBytes();
+            return new ResponseEntity<>(defaultImageBytes, headers, HttpStatus.NOT_FOUND);
+        }
     }
 }

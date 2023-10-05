@@ -13,11 +13,7 @@ import com.skypro.Marketplace.repository.AdRepository;
 import com.skypro.Marketplace.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.env.Environment;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,14 +40,13 @@ public class AdService {
 
     private final Logger logger = LoggerFactory.getLogger(AdService.class);
 
-    private final Environment environment;
+    @Value("${image.upload.path}")
+    private String imagePath;
 
-    public AdService(AdRepository adRepository, AdMapper adMapper, UserRepository userRepository, Environment environment) {
+    public AdService(AdRepository adRepository, AdMapper adMapper, UserRepository userRepository) {
         this.adRepository = adRepository;
         this.adMapper = adMapper;
         this.userRepository = userRepository;
-
-        this.environment = environment;
     }
 
     /**
@@ -78,21 +73,19 @@ public class AdService {
      */
     @Transactional
     public AdDTO createAd(CreateOrUpdateAd createOrUpdateAd, Integer userId, MultipartFile imageFile) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
 
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+        Ad ad = new Ad();
+        ad.setTitle(createOrUpdateAd.getTitle());
+        ad.setPrice(createOrUpdateAd.getPrice());
+        ad.setDescription(createOrUpdateAd.getDescription());
+        ad.setUser(user);
 
-            Ad ad = new Ad();
-            ad.setTitle(createOrUpdateAd.getTitle());
-            ad.setPrice(createOrUpdateAd.getPrice());
-            ad.setDescription(createOrUpdateAd.getDescription());
-            ad.setUser(user);
+        ad = adRepository.save(ad);
 
-            ad = adRepository.save(ad);
-
-            if (!imageFile.isEmpty()) {
+        if (!imageFile.isEmpty()) {
             String imageName = userId + "_" + imageFile.getOriginalFilename();
-            String imagePath = environment.getProperty("image.upload.path");
 
             if (imagePath != null && !imagePath.isEmpty()) {
                 try {
@@ -108,7 +101,7 @@ public class AdService {
             }
         }
 
-            return adMapper.adToAdDTO(ad);
+        return adMapper.adToAdDTO(ad);
     }
 
     /**
@@ -196,14 +189,11 @@ public class AdService {
      */
     @Transactional
     public void updateAdImage(Integer adId, MultipartFile imageData) {
+        Optional<Ad> optionalAd = adRepository.findById(adId);
+        Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
 
-
-            Optional<Ad> optionalAd = adRepository.findById(adId);
-            Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
-
-            if (imageData != null && !imageData.isEmpty()) {
+        if (imageData != null && !imageData.isEmpty()) {
             try {
-                String imagePath = environment.getProperty("image.upload.path");
                 if (imagePath != null && !imagePath.isEmpty()) {
                     String imageName = adId + "_" + imageData.getOriginalFilename();
                     Path filePath = Paths.get(imagePath, imageName);
@@ -238,19 +228,6 @@ public class AdService {
         return false;
     }
 
-    /**
-     * Check if the authenticated user has the admin role.
-     *
-     * @param authentication Information about the current user's authentication.
-     * @return True if the user has the admin role, false otherwise.
-     */
-    private boolean hasAdminRole(Authentication authentication) {
-        if (authentication != null && authentication.isAuthenticated()) {
-            return authentication.getAuthorities().stream()
-                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
-        }
-        return false;
-    }
 
     /**
      * Get the image of an advertisement by ID.
@@ -267,35 +244,17 @@ public class AdService {
         if (imageString != null && !imageString.isEmpty()) {
             return imageString.getBytes(StandardCharsets.UTF_8);
         } else {
-            return new byte[0];
+            return null;
         }
     }
 
-    /**
-     * Retrieves a ResponseEntity containing an advertisement's image as a byte array along with appropriate HTTP headers.
-     *
-     * @param adId The ID of the advertisement for which to retrieve the image.
-     * @return ResponseEntity containing the image as a byte array and appropriate HTTP headers.
-     */
-    public ResponseEntity<byte[]> getAdImageResponse(Integer adId) {
-        byte[] adImage = getAdImage(adId);
-
-        HttpHeaders headers = new HttpHeaders();
-        if (adImage.length > 0) {
-            headers.setContentType(MediaType.IMAGE_JPEG);
-            return new ResponseEntity<>(adImage, headers, HttpStatus.OK);
-        } else {
-
-            return new ResponseEntity<>(getDefaultImageBytes(), headers, HttpStatus.NOT_FOUND);
-        }
-    }
 
     /**
-     * Retrieves the default image as a byte array.
+     * Returns a byte array representing the default image.
      *
-     * @return The default image as a byte array.
+     * @return A byte array containing image data or {@code null} if no image is available.
      */
     public byte[] getDefaultImageBytes() {
-        return new byte[0];
+        return null;
     }
 }

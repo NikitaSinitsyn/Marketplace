@@ -6,6 +6,7 @@ import com.skypro.Marketplace.dto.ad.CreateOrUpdateAd;
 import com.skypro.Marketplace.dto.ad.ExtendedAd;
 import com.skypro.Marketplace.dto.user.SecurityUser;
 import com.skypro.Marketplace.service.impl.AdService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -138,13 +139,23 @@ public class AdController {
     }
 
     /**
-     * Retrieves an advertisement's image based on the provided advertisement ID.
+     * Retrieves an advertisement's image as a byte array and returns it as a ResponseEntity with appropriate HTTP headers.
      *
      * @param adId The ID of the advertisement for which to retrieve the image.
      * @return ResponseEntity containing the image as a byte array and appropriate HTTP headers.
      */
     @GetMapping("/ads/{adId}/image")
     public ResponseEntity<byte[]> getAdImage(@PathVariable Integer adId) {
-        return adService.getAdImageResponse(adId);
+        byte[] adImage = adService.getAdImage(adId);
+
+        HttpHeaders headers = new HttpHeaders();
+        if (adImage != null && adImage.length > 0) {
+            headers.setContentType(MediaType.IMAGE_JPEG);
+            return new ResponseEntity<>(adImage, headers, HttpStatus.OK);
+        } else {
+            byte[] defaultImage = adService.getDefaultImageBytes();
+            headers.setContentType(MediaType.IMAGE_JPEG);
+            return new ResponseEntity<>(defaultImage, headers, HttpStatus.NOT_FOUND);
+        }
     }
 }

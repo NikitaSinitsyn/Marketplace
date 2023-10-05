@@ -132,18 +132,4 @@ public class CommentService {
         return false;
     }
 
-    /**
-     * Check if the authenticated user has the admin role.
-     *
-     * @param authentication Information about the current user's authentication.
-     * @return True if the user has the admin role, false otherwise.
-     */
-    private boolean hasAdminRole(Authentication authentication) {
-        if (authentication != null && authentication.isAuthenticated()) {
-            return authentication.getAuthorities().stream()
-                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
-        }
-        return false;
-    }
-
 }

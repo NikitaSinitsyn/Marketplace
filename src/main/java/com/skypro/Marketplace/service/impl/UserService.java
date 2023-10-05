@@ -11,10 +11,7 @@ import com.skypro.Marketplace.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.core.env.Environment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,14 +39,15 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
-    private final Environment environment;
+
+    @Value("${image.upload.path}")
+    private String imagePath;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper, Environment environment) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
-        this.environment = environment;
     }
 
     /**
@@ -132,8 +129,6 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
 
-        String imagePath = environment.getProperty("image.upload.path");
-
         if (imagePath != null && !imagePath.isEmpty()) {
             String fileName = userId + "_" + image.getOriginalFilename();
             Path filePath = Paths.get(imagePath, fileName);
@@ -169,42 +164,26 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Retrieves a user's image based on the provided user ID and image name.
+     * Retrieves a user's image as a byte array.
      *
-     * @param userId    The user's identifier for whom to retrieve the image.
-     * @param imageName The name of the image.
-     * @return ResponseEntity containing the image as a byte array and appropriate HTTP headers.
+     * @param userId The ID of the user for whom to retrieve the image.
+     * @param imageName The name of the user's image.
+     * @return A byte array containing the user's image data, or the default image data if the image is not found or an error occurs.
      */
     @Transactional
-    public ResponseEntity<byte[]> getUserImage(Integer userId, String imageName) {
-        String imagePath = environment.getProperty("image.upload.path");
-
-        if (imagePath == null) {
-            imagePath = "путь/по/умолчанию";
-        }
+    public byte[] getUserImage(Integer userId, String imageName) {
 
         Path imageFilePath = Paths.get(imagePath, userId + "_" + imageName);
 
         if (!Files.exists(imageFilePath)) {
-            byte[] defaultImageBytes = getDefaultImageBytes();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_JPEG);
-            return new ResponseEntity<>(defaultImageBytes, headers, HttpStatus.NOT_FOUND);
+            return getDefaultImageBytes();
         }
 
         try (InputStream inputStream = Files.newInputStream(imageFilePath)) {
-            byte[] imageBytes = StreamUtils.copyToByteArray(inputStream);
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_JPEG);
-
-            return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+            return StreamUtils.copyToByteArray(inputStream);
         } catch (IOException e) {
             logger.error("Error reading user image: {}", e.getMessage());
-
-            byte[] defaultImageBytes = getDefaultImageBytes();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_JPEG);
-            return new ResponseEntity<>(defaultImageBytes, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+            return getDefaultImageBytes();
         }
     }
 
@@ -213,7 +192,7 @@ public class UserService implements UserDetailsService {
      *
      * @return The default image as a byte array.
      */
-    private byte[] getDefaultImageBytes() {
-        return new byte[0];
+    public byte[] getDefaultImageBytes() {
+        return null;
     }
 }

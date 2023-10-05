@@ -1,39 +1,29 @@
 package com.skypro.Marketplace.controllerTests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skypro.Marketplace.dto.user.*;
+import com.skypro.Marketplace.dto.user.NewPassword;
+import com.skypro.Marketplace.dto.user.Register;
+import com.skypro.Marketplace.dto.user.UpdateUser;
 import com.skypro.Marketplace.entity.Role;
 import com.skypro.Marketplace.entity.User;
 import com.skypro.Marketplace.repository.UserRepository;
 import com.skypro.Marketplace.service.impl.AuthServiceImpl;
 import com.skypro.Marketplace.service.impl.UserService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.util.ResourceUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -68,26 +58,22 @@ public class UserControllerIntegrationTest {
         authServiceImpl.register(register);
         createdUser = userRepository.findByEmail(register.getUsername()).orElse(null);
     }
+    @AfterEach
+    public void tearDown() {
+        if (createdUser != null) {
+            userRepository.delete(createdUser);
+        }
+    }
 
     @Test
     public void testSetPassword() throws Exception {
-        UserDetails userDetails = userService.loadUserByUsername("testUsername");
-
         NewPassword newPassword = new NewPassword();
         newPassword.setCurrentPassword("testPassword");
         newPassword.setNewPassword("newPassword");
 
-        SecurityUser securityUser = new SecurityUser(
-                createdUser.getId(), createdUser.getEmail(), createdUser.getPassword(),
-                createdUser.getFirstName(), createdUser.getLastName(),
-                createdUser.getPhone(), createdUser.getRole()
-        );
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(securityUser, null, securityUser.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         mockMvc.perform(put("/users/setPassword")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Basic " + getBase64Credentials())
                         .content(objectMapper.writeValueAsString(newPassword))
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -97,16 +83,8 @@ public class UserControllerIntegrationTest {
     @Test
     public void testGetUser() throws Exception {
 
-        SecurityUser securityUser = new SecurityUser(
-                createdUser.getId(), createdUser.getEmail(), createdUser.getPassword(),
-                createdUser.getFirstName(), createdUser.getLastName(),
-                createdUser.getPhone(), createdUser.getRole()
-        );
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(securityUser, null, securityUser.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         mockMvc.perform(get("/users/me")
+                        .header(HttpHeaders.AUTHORIZATION, "Basic " + getBase64Credentials())
                 )
                 .andExpect(status().isOk());
     }
@@ -115,24 +93,21 @@ public class UserControllerIntegrationTest {
 
         UpdateUser updatedUser = new UpdateUser("UpdatedFirstName", "UpdatedLastName", "UpdatedPhone");
 
-        SecurityUser securityUser = new SecurityUser(
-                createdUser.getId(), createdUser.getEmail(), createdUser.getPassword(),
-                createdUser.getFirstName(), createdUser.getLastName(),
-                createdUser.getPhone(), createdUser.getRole()
-        );
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(securityUser, null, securityUser.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // Perform the updateUser request
         mockMvc.perform(patch("/users/me")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Basic " + getBase64Credentials())
                         .content(objectMapper.writeValueAsString(updatedUser))
                 )
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("UpdatedFirstName"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("UpdatedLastName"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.phone").value("UpdatedPhone"));
+    }
+
+    private String getBase64Credentials() {
+        String credentials = "testUsername" + ":" + "testPassword";
+        byte[] credentialsBytes = credentials.getBytes(StandardCharsets.UTF_8);
+        return Base64.getEncoder().encodeToString(credentialsBytes);
     }
 
 //    @Test
