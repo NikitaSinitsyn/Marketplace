@@ -28,7 +28,7 @@ public class CommentController {
      * @param adId Advertisement ID.
      * @return Comments for the specified advertisement.
      */
-    @GetMapping("/")
+    @GetMapping({"", "/"})
     public ResponseEntity<Comments> getComments(@PathVariable Integer adId) {
 
         Comments comments = commentService.getCommentsByAdId(adId);
@@ -42,7 +42,7 @@ public class CommentController {
      * @param createOrUpdateComment Comment data to be added.
      * @return Created comment data.
      */
-    @PostMapping("/")
+    @PostMapping({"", "/"})
     public ResponseEntity<CommentDTO> addComment(@PathVariable Integer adId, @RequestBody CreateOrUpdateComment createOrUpdateComment) {
 
         CommentDTO comment = commentService.addComment(adId, createOrUpdateComment);

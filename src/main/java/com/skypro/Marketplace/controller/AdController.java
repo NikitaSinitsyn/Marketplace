@@ -36,7 +36,7 @@ public class AdController {
      *
      * @return List of advertisements.
      */
-    @GetMapping("/")
+    @GetMapping({"", "/"})
     public ResponseEntity<Ads> getAllAds() {
         Ads ads = adService.getAds();
         return ResponseEntity.ok(ads);
@@ -50,7 +50,7 @@ public class AdController {
      * @param authentication   Information about the current user's authentication.
      * @return Response about the created advertisement.
      */
-    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value ={"", "/"}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addAd(
             @RequestPart("image") MultipartFile imageFile,
             @RequestPart("properties") CreateOrUpdateAd createOrUpdateAd,
@@ -68,10 +68,10 @@ public class AdController {
      * @return Extended advertisement information.
      */
     @GetMapping("/{adId}")
-    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
-    public ResponseEntity<?> getAds(@PathVariable Integer adId) {
+    //@PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
+    public ResponseEntity<?> getAds(@PathVariable Integer adId, Authentication authentication) {
 
-        ExtendedAd extendedAd = adService.getExtendedAdById(adId);
+        ExtendedAd extendedAd = adService.getExtendedAdById(adId, authentication);
         return ResponseEntity.status(HttpStatus.OK).body(extendedAd);
     }
 

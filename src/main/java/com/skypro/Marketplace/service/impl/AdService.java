@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -111,11 +112,12 @@ public class AdService {
      * @return Extended advertisement information.
      */
     @Transactional
-    public ExtendedAd getExtendedAdById(Integer adId) {
+    public ExtendedAd getExtendedAdById(Integer adId, Authentication authentication) {
 
             Optional<Ad> optionalAd = adRepository.findById(adId);
             Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
 
+        if (isAdOwner(authentication, adId)) {
             User user = ad.getUser();
 
             return new ExtendedAd(
@@ -129,6 +131,13 @@ public class AdService {
                     ad.getPrice(),
                     ad.getTitle()
             );
+        } else {
+            try {
+                throw new AccessDeniedException("Access denied");
+            } catch (AccessDeniedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     /**
