@@ -1,22 +1,28 @@
 package com.skypro.Marketplace.config;
 
-import com.skypro.Marketplace.dto.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+/**
+ * Configuration class for defining security settings in the application.
+ */
 @Configuration
-public class WebSecurityConfig {
+@EnableWebSecurity
+@EnableMethodSecurity
+public class WebSecurityConfig  {
 
+    /**
+     * An array of URL patterns that should be allowed without authentication.
+     */
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
             "/swagger-ui.html",
@@ -26,18 +32,13 @@ public class WebSecurityConfig {
             "/register"
     };
 
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user =
-                User.builder()
-                        .username("user@gmail.com")
-                        .password("password")
-                        .passwordEncoder(passwordEncoder::encode)
-                        .roles(Role.USER.name())
-                        .build();
-        return new InMemoryUserDetailsManager(user);
-    }
-
+    /**
+     * Configures the security filter chain for the application.
+     *
+     * @param http The HttpSecurity object to configure security settings.
+     * @return A SecurityFilterChain object representing the configured security filter chain.
+     * @throws Exception If an exception occurs while configuring security settings.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf()
@@ -47,6 +48,8 @@ public class WebSecurityConfig {
                                 authorization
                                         .mvcMatchers(AUTH_WHITELIST)
                                         .permitAll()
+                                        .mvcMatchers(HttpMethod.GET, "/ads")
+                                        .permitAll()
                                         .mvcMatchers("/ads/**", "/users/**")
                                         .authenticated())
                 .cors()
@@ -55,9 +58,16 @@ public class WebSecurityConfig {
         return http.build();
     }
 
+    /**
+     * Defines a PasswordEncoder bean for hashing and verifying passwords.
+     *
+     * @return A BCryptPasswordEncoder bean.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
 
 }
