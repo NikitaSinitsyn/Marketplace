@@ -134,7 +134,7 @@ public class UserService implements UserDetailsService {
             Path filePath = Paths.get(imagePath, fileName);
 
             try {
-                Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(image.getInputStream(), Paths.get(imagePath, image.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
                 user.setImage(fileName);
                 userRepository.save(user);
                 return userMapper.userToUserDTO(user);

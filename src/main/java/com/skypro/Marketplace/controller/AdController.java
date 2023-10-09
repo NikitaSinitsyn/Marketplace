@@ -36,7 +36,7 @@ public class AdController {
      *
      * @return List of advertisements.
      */
-    @GetMapping("/")
+    @GetMapping({"", "/"})
     public ResponseEntity<Ads> getAllAds() {
         Ads ads = adService.getAds();
         return ResponseEntity.ok(ads);
@@ -50,7 +50,7 @@ public class AdController {
      * @param authentication   Information about the current user's authentication.
      * @return Response about the created advertisement.
      */
-    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value ={"", "/"}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addAd(
             @RequestPart("image") MultipartFile imageFile,
             @RequestPart("properties") CreateOrUpdateAd createOrUpdateAd,
@@ -68,10 +68,10 @@ public class AdController {
      * @return Extended advertisement information.
      */
     @GetMapping("/{adId}")
-    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
-    public ResponseEntity<?> getAds(@PathVariable Integer adId) {
+    //@PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
+    public ResponseEntity<?> getAds(@PathVariable Integer adId, Authentication authentication) {
 
-        ExtendedAd extendedAd = adService.getExtendedAdById(adId);
+        ExtendedAd extendedAd = adService.getExtendedAdById(adId, authentication);
         return ResponseEntity.status(HttpStatus.OK).body(extendedAd);
     }
 
@@ -82,10 +82,10 @@ public class AdController {
      * @return HTTP response indicating success.
      */
     @DeleteMapping("/{adId}")
-    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
-    public ResponseEntity<Void> removeAd(@PathVariable Integer adId) {
+    //@PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
+    public ResponseEntity<Void> removeAd(@PathVariable Integer adId, Authentication authentication) {
 
-        adService.deleteAd(adId);
+        adService.deleteAd(adId, authentication);
         return ResponseEntity.noContent().build();
     }
 
@@ -97,13 +97,13 @@ public class AdController {
      * @return Updated advertisement information.
      */
     @PatchMapping("/{adId}")
-    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
+    //@PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
     public ResponseEntity<AdDTO> updateAds(
-            @PathVariable Integer adId,
+            @PathVariable Integer adId , Authentication authentication,
             @RequestBody CreateOrUpdateAd createOrUpdateAd
     ) {
 
-        AdDTO updatedAd = adService.updateAd(adId, createOrUpdateAd);
+        AdDTO updatedAd = adService.updateAd(adId, createOrUpdateAd, authentication);
         return ResponseEntity.status(HttpStatus.OK).body(updatedAd);
     }
 
@@ -114,7 +114,7 @@ public class AdController {
      * @return List of advertisements for the current user.
      */
     @GetMapping("/me")
-    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
+    //@PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
     public ResponseEntity<List<AdDTO>> getAdsMe(Authentication authentication) {
 
         List<AdDTO> ads = adService.getAdsForCurrentUser(authentication);
@@ -129,12 +129,12 @@ public class AdController {
      * @return HTTP response indicating success.
      */
     @PatchMapping(value = "/{adId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
+    //@PreAuthorize("@adService.isAdOwner(authentication, #adId) or hasRole('ADMIN')")
     public ResponseEntity<String> updateImage(
-            @PathVariable Integer adId,
+            @PathVariable Integer adId, Authentication authentication,
             @RequestParam("image") MultipartFile imageFile
     ) {
-        adService.updateAdImage(adId, imageFile);
+        adService.updateAdImage(adId, imageFile, authentication);
         return ResponseEntity.status(HttpStatus.OK).body("Image updated successfully.");
     }
 
@@ -144,7 +144,7 @@ public class AdController {
      * @param adId The ID of the advertisement for which to retrieve the image.
      * @return ResponseEntity containing the image as a byte array and appropriate HTTP headers.
      */
-    @GetMapping("/ads/{adId}/image")
+    @GetMapping("/ads/{adId}/images")
     public ResponseEntity<byte[]> getAdImage(@PathVariable Integer adId) {
         byte[] adImage = adService.getAdImage(adId);
 

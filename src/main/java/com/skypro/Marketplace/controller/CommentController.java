@@ -7,6 +7,7 @@ import com.skypro.Marketplace.service.impl.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -28,7 +29,7 @@ public class CommentController {
      * @param adId Advertisement ID.
      * @return Comments for the specified advertisement.
      */
-    @GetMapping("/")
+    @GetMapping({"", "/"})
     public ResponseEntity<Comments> getComments(@PathVariable Integer adId) {
 
         Comments comments = commentService.getCommentsByAdId(adId);
@@ -42,7 +43,7 @@ public class CommentController {
      * @param createOrUpdateComment Comment data to be added.
      * @return Created comment data.
      */
-    @PostMapping("/")
+    @PostMapping({"", "/"})
     public ResponseEntity<CommentDTO> addComment(@PathVariable Integer adId, @RequestBody CreateOrUpdateComment createOrUpdateComment) {
 
         CommentDTO comment = commentService.addComment(adId, createOrUpdateComment);
@@ -56,9 +57,9 @@ public class CommentController {
      * @return HTTP response indicating success.
      */
     @DeleteMapping("/{commentId}")
-    @PreAuthorize("@commentService.isCommentOwner(authentication, #commentId) or hasRole('ADMIN')")
-    public ResponseEntity<?> deleteComment(@PathVariable Integer commentId) {
-        return commentService.deleteComment(commentId);
+    //@PreAuthorize("@commentService.isCommentOwner(authentication, #commentId) or hasRole('ADMIN')")
+    public ResponseEntity<?> deleteComment(@PathVariable Integer commentId, Authentication authentication) {
+        return commentService.deleteComment(commentId,authentication);
     }
 
     /**
@@ -69,10 +70,10 @@ public class CommentController {
      * @return Updated comment data.
      */
     @PatchMapping("/{commentId}")
-    @PreAuthorize("@commentService.isCommentOwner(authentication, #commentId) or hasRole('ADMIN')")
-    public ResponseEntity<CommentDTO> updateComment(@PathVariable Integer commentId, @RequestBody CreateOrUpdateComment CreateOrUpdateComment) {
+    //@PreAuthorize("@commentService.isCommentOwner(authentication, #commentId) or hasRole('ADMIN')")
+    public ResponseEntity<CommentDTO> updateComment(@PathVariable Integer commentId, Authentication authentication, @RequestBody CreateOrUpdateComment CreateOrUpdateComment) {
 
-        CommentDTO updatedComment = commentService.updateComment(commentId, CreateOrUpdateComment);
+        CommentDTO updatedComment = commentService.updateComment(commentId, CreateOrUpdateComment, authentication);
         return ResponseEntity.status(HttpStatus.OK).body(updatedComment);
     }
 }
