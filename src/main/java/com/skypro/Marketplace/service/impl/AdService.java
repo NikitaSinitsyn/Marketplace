@@ -8,6 +8,7 @@ import com.skypro.Marketplace.dto.user.SecurityUser;
 import com.skypro.Marketplace.entity.Ad;
 import com.skypro.Marketplace.entity.User;
 import com.skypro.Marketplace.exception.AdNotFoundException;
+import com.skypro.Marketplace.exception.ForbiddenException;
 import com.skypro.Marketplace.mapper.AdMapper;
 import com.skypro.Marketplace.repository.AdRepository;
 import com.skypro.Marketplace.repository.UserRepository;
@@ -114,30 +115,26 @@ public class AdService {
     @Transactional
     public ExtendedAd getExtendedAdById(Integer adId, Authentication authentication) {
 
-            Optional<Ad> optionalAd = adRepository.findById(adId);
-            Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
+        Optional<Ad> optionalAd = adRepository.findById(adId);
+        Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
 
-        if (isAdOwner(authentication, adId)) {
-            User user = ad.getUser();
-
-            return new ExtendedAd(
-                    ad.getId(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    ad.getDescription(),
-                    user.getEmail(),
-                    ad.getImage(),
-                    user.getPhone(),
-                    ad.getPrice(),
-                    ad.getTitle()
-            );
-        } else {
-            try {
-                throw new AccessDeniedException("Access denied");
-            } catch (AccessDeniedException e) {
-                throw new RuntimeException(e);
-            }
+        if (!isAdOwner(authentication, adId) && !hasAdminRole(authentication)) {
+            throw new ForbiddenException("Access forbidden to update this ad.");
         }
+        User user = ad.getUser();
+
+        return new ExtendedAd(
+                ad.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                ad.getDescription(),
+                user.getEmail(),
+                ad.getImage(),
+                user.getPhone(),
+                ad.getPrice(),
+                ad.getTitle()
+        );
+
     }
 
     /**
@@ -146,12 +143,15 @@ public class AdService {
      * @param adId Advertisement ID.
      */
     @Transactional
-    public void deleteAd(Integer adId) {
+    public void deleteAd(Integer adId, Authentication authentication) {
 
-            Optional<Ad> optionalAd = adRepository.findById(adId);
-            Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
+        Optional<Ad> optionalAd = adRepository.findById(adId);
+        Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
+        if (!isAdOwner(authentication, adId) && !hasAdminRole(authentication)) {
+            throw new ForbiddenException("Access forbidden to update this ad.");
+        }
+        adRepository.deleteById(adId);
 
-            adRepository.deleteById(adId);
     }
 
     /**
@@ -162,18 +162,22 @@ public class AdService {
      * @return Updated advertisement data.
      */
     @Transactional
-    public AdDTO updateAd(Integer adId, CreateOrUpdateAd createOrUpdateAd) {
+    public AdDTO updateAd(Integer adId, CreateOrUpdateAd createOrUpdateAd, Authentication authentication) {
 
-            Optional<Ad> optionalAd = adRepository.findById(adId);
-            Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
+        Optional<Ad> optionalAd = adRepository.findById(adId);
+        Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
 
-            ad.setTitle(createOrUpdateAd.getTitle());
-            ad.setPrice(createOrUpdateAd.getPrice());
-            ad.setDescription(createOrUpdateAd.getDescription());
+        if (!isAdOwner(authentication, adId) && !hasAdminRole(authentication)) {
+            throw new ForbiddenException("Access forbidden to update this ad.");
+        }
 
-            ad = adRepository.save(ad);
+        ad.setTitle(createOrUpdateAd.getTitle());
+        ad.setPrice(createOrUpdateAd.getPrice());
+        ad.setDescription(createOrUpdateAd.getDescription());
 
-            return adMapper.adToAdDTO(ad);
+        ad = adRepository.save(ad);
+
+        return adMapper.adToAdDTO(ad);
     }
 
     /**
@@ -185,9 +189,10 @@ public class AdService {
     @Transactional
     public List<AdDTO> getAdsForCurrentUser(Authentication authentication) {
 
-            SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
-            List<Ad> ads = adRepository.findByUserId(securityUser.getId());
-            return ads.stream().map(adMapper::adToAdDTO).collect(Collectors.toList());
+        SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+        List<Ad> ads = adRepository.findByUserId(securityUser.getId());
+
+        return ads.stream().map(adMapper::adToAdDTO).collect(Collectors.toList());
     }
 
     /**
@@ -197,9 +202,12 @@ public class AdService {
      * @param imageData New image data for the advertisement.
      */
     @Transactional
-    public void updateAdImage(Integer adId, MultipartFile imageData) {
+    public void updateAdImage(Integer adId, MultipartFile imageData, Authentication authentication) {
         Optional<Ad> optionalAd = adRepository.findById(adId);
         Ad ad = optionalAd.orElseThrow(() -> new AdNotFoundException("Ad not found with id: " + adId));
+        if (!isAdOwner(authentication, adId) && !hasAdminRole(authentication)) {
+            throw new ForbiddenException("Access forbidden to update this ad.");
+        }
 
         if (imageData != null && !imageData.isEmpty()) {
             try {
@@ -233,6 +241,14 @@ public class AdService {
         if (authentication != null && authentication.isAuthenticated()) {
             SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
             return adRepository.existsByIdAndUser_Id(adId, securityUser.getId());
+        }
+        return false;
+    }
+
+    private boolean hasAdminRole(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return authentication.getAuthorities().stream()
+                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
         }
         return false;
     }

@@ -10,6 +10,7 @@ import com.skypro.Marketplace.entity.Comment;
 import com.skypro.Marketplace.entity.User;
 import com.skypro.Marketplace.exception.AdNotFoundException;
 import com.skypro.Marketplace.exception.CommentNotFoundException;
+import com.skypro.Marketplace.exception.ForbiddenException;
 import com.skypro.Marketplace.mapper.CommentMapper;
 import com.skypro.Marketplace.repository.AdRepository;
 import com.skypro.Marketplace.repository.CommentRepository;
@@ -103,10 +104,14 @@ public class CommentService {
      * @return HTTP response indicating success.
      */
     @Transactional
-    public ResponseEntity<?> deleteComment(Integer commentId) {
+    public ResponseEntity<?> deleteComment(Integer commentId, Authentication authentication) {
 
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         Comment comment = optionalComment.orElseThrow(() -> new CommentNotFoundException("Comment not found with id: " + commentId));
+
+        if (!isCommentOwner(authentication, commentId) && !hasAdminRole(authentication)) {
+            throw new ForbiddenException("Access forbidden to update this ad.");
+        }
 
         commentRepository.deleteById(commentId);
         return ResponseEntity.ok().build();
@@ -120,10 +125,13 @@ public class CommentService {
      * @return Updated comment data.
      */
     @Transactional
-    public CommentDTO updateComment(Integer commentId, CreateOrUpdateComment CreateOrUpdateComment) {
+    public CommentDTO updateComment(Integer commentId, CreateOrUpdateComment CreateOrUpdateComment, Authentication authentication) {
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException("Comment not found with id: " + commentId));
+        if (!isCommentOwner(authentication, commentId) && !hasAdminRole(authentication)) {
+            throw new ForbiddenException("Access forbidden to update this ad.");
+        }
 
         comment.setText(CreateOrUpdateComment.getText());
 
@@ -143,6 +151,14 @@ public class CommentService {
         if (authentication != null && authentication.isAuthenticated()) {
             SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
             return commentRepository.existsByIdAndAd_User_Id(commentId, securityUser.getId());
+        }
+        return false;
+    }
+
+    private boolean hasAdminRole(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return authentication.getAuthorities().stream()
+                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
         }
         return false;
     }

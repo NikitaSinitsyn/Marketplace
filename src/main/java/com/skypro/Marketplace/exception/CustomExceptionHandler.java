@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Custom exception handler class to handle various exceptions and provide
@@ -69,5 +71,11 @@ public class CustomExceptionHandler {
     public ResponseEntity<String> handleIOException(IOException ex) {
         String errorMessage = "An error occurred while processing the image: " + ex.getMessage();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+    }
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Object> handleForbiddenException(ForbiddenException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", "Access forbidden");
+        return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
     }
 }
