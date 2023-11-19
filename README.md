@@ -6,10 +6,6 @@ Marketplace is an online platform that allows users to create listings for selli
 
 Nikita Sinitsyn (Developer)
 
-Irina Shatilova (Developer)
-
-Marina Golobova (Developer)
-
 
 **Project Description**
 
